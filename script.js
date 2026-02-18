@@ -1,14 +1,13 @@
-const DB_KEY = 'rewear_v7_db';
+const DB_KEY = 'rewear_v8_db';
 
 const initialData = [
-    { id: 1, name: "HELMUT LANG 1999 COAT", price: 850, desc: "Iconic archival piece from the 90s.", img: null },
-    { id: 2, name: "RICK OWENS DUNKS", price: 1200, desc: "Original leather high tops.", img: null },
-    { id: 3, name: "RAF SIMONS BOMBER", price: 1800, desc: "Riot Riot Riot collection masterpiece.", img: null }
+    { id: 1, name: "HELMUT LANG 1999 COAT", price: 850, desc: "Classic archival bondage parka.", img: null },
+    { id: 2, name: "RICK OWENS GEOBASKET", price: 1200, desc: "Short tongue, blistered leather.", img: null },
+    { id: 3, name: "RAF SIMONS BOMBER", price: 1800, desc: "Riot Riot Riot collection.", img: null }
 ];
 
-// Audio Context (Safe Implementation)
+// Audio Setup
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
 function playClick() {
     if(!settings.soundEnabled) return;
     if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -17,19 +16,13 @@ function playClick() {
         const gain = audioCtx.createGain();
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.frequency.value = 800;
+        osc.frequency.value = 600; // Трохи нижчий тон для "дорогого" звуку
         gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.1);
+        osc.stop(audioCtx.currentTime + 0.05);
     } catch(e) {}
 }
-
-const dict = {
-    en: { hero: "RE—USE<br>ERA" },
-    ua: { hero: "ДРУГА<br>ХВИЛЯ" },
-    de: { hero: "ZWEITE<br>WELLE" }
-};
 
 const rates = { USD: 1, UAH: 41, EUR: 0.92 };
 const symbols = { USD: '$', UAH: '₴', EUR: '€' };
@@ -38,19 +31,26 @@ class Settings {
     constructor() {
         this.currency = 'USD';
         this.soundEnabled = true;
+        this.theme = 'matte';
     }
+    
     setTheme(mode) {
         playClick();
-        document.body.className = mode === 'pure' ? 'pure-black' : '';
-        document.getElementById('themeDeep').className = mode === 'deep' ? 'setting-card active' : 'setting-card';
-        document.getElementById('themePure').className = mode === 'pure' ? 'setting-card active' : 'setting-card';
+        this.theme = mode;
+        document.body.className = ''; // Скидаємо старі класи
+        document.body.classList.add('theme-' + mode);
+        
+        document.getElementById('themeMatte').className = mode === 'matte' ? 'setting-card active' : 'setting-card';
+        document.getElementById('themeModern').className = mode === 'modern' ? 'setting-card active' : 'setting-card';
     }
+
     setSound(bool) {
         this.soundEnabled = bool;
         if(bool) playClick();
         document.getElementById('soundOn').className = bool ? 'setting-card active' : 'setting-card';
         document.getElementById('soundOff').className = !bool ? 'setting-card active' : 'setting-card';
     }
+
     setCurrency(c) {
         playClick();
         this.currency = c;
@@ -60,12 +60,14 @@ class Settings {
         app.renderGrid();
         app.updateCart();
     }
+
     formatPrice(p) {
         const val = Math.round(p * rates[this.currency]);
         return `${symbols[this.currency]}${val}`;
     }
+
     reset() {
-        if(confirm('HARD RESET: This will delete all your added products. Continue?')) {
+        if(confirm('FACTORY RESET: All data will be wiped.')) {
             localStorage.removeItem(DB_KEY);
             location.reload();
         }
@@ -76,10 +78,10 @@ class App {
     constructor() {
         this.products = JSON.parse(localStorage.getItem(DB_KEY)) || initialData;
         this.cart = [];
-        this.lang = 'en';
         this.currId = null;
         this.renderGrid();
     }
+
     save() { localStorage.setItem(DB_KEY, JSON.stringify(this.products)); }
     
     renderGrid() {
@@ -87,13 +89,13 @@ class App {
         const term = document.getElementById('search').value.toLowerCase();
         grid.innerHTML = '';
         const filtered = this.products.filter(p => p.name.toLowerCase().includes(term));
-        document.getElementById('itemCounter').innerText = `${filtered.length} ITEMS`;
+        document.getElementById('itemCounter').innerText = `${filtered.length} ARCHIVE UNITS`;
 
         filtered.forEach(p => {
             const el = document.createElement('div');
             el.className = 'card fade-in';
             const imgUrl = p.img ? `url(${p.img})` : 'none';
-            const noImg = p.img ? '' : '<span style="color:#555; font-size:10px;">NO IMG</span>';
+            const noImg = p.img ? '' : '<span style="color:var(--text-sec); font-size:10px;">NO IMG</span>';
             
             el.innerHTML = `
                 <div class="card-img-box">
@@ -117,9 +119,12 @@ class App {
         
         document.getElementById('mTitle').innerText = p.name;
         document.getElementById('mPrice').innerText = settings.formatPrice(p.price);
-        document.getElementById('mDesc').innerText = p.desc || "No description.";
-        document.getElementById('mImg').src = p.img || '';
-        document.getElementById('mImg').style.display = p.img ? 'block' : 'none';
+        document.getElementById('mDesc').innerText = p.desc || "No data.";
+        document.getElementById('mId').innerText = p.id;
+        
+        const imgEl = document.getElementById('mImg');
+        imgEl.src = p.img || '';
+        imgEl.style.display = p.img ? 'block' : 'none';
 
         if(window.sysAdmin.active) {
             document.getElementById('mViewMode').style.display = 'none';
@@ -157,12 +162,12 @@ class App {
             const div = document.createElement('div');
             div.className = 'cart-item';
             div.innerHTML = `
-                <div class="cart-thumb" style="background-image:url(${item.img||''}); background-size:cover; background-color:#111;"></div>
+                <div class="cart-thumb" style="background-image:url(${item.img||''}); background-size:cover; background-position:center; background-color:#111;"></div>
                 <div style="flex:1;">
                     <div style="font-weight:700; font-size:11px;">${item.name}</div>
-                    <div style="color:#888; font-size:10px;">${settings.formatPrice(item.price)}</div>
+                    <div style="color:var(--text-sec); font-size:10px;">${settings.formatPrice(item.price)}</div>
                 </div>
-                <div style="color:#555; font-size:9px; cursor:pointer;" onclick="app.remCart(${idx})">REMOVE</div>
+                <div style="color:var(--text-sec); font-size:9px; cursor:pointer;" onclick="app.remCart(${idx})">REMOVE</div>
             `;
             list.appendChild(div);
         });
@@ -172,15 +177,6 @@ class App {
     }
 
     remCart(idx) { playClick(); this.cart.splice(idx, 1); this.updateCart(); }
-
-    setLang(l) {
-        playClick();
-        this.lang = l;
-        if(dict[l]) document.getElementById('heroText').innerHTML = dict[l].hero;
-        ['en','ua','de'].forEach(k => {
-            document.getElementById('lang-'+k).className = k === l ? 'btn-outline active' : 'btn-outline';
-        });
-    }
 }
 
 class UI {
@@ -206,7 +202,7 @@ class Admin {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
             app.renderGrid();
-        } else alert('ERROR: WRONG PASSCODE');
+        } else alert('DENIED');
     }
     logout() {
         playClick();
@@ -218,7 +214,7 @@ class Admin {
     }
     create() {
         const id = Date.now();
-        app.products.unshift({ id, name: "NEW ITEM", price: 0, desc: "Description...", img: null });
+        app.products.unshift({ id, name: "NEW ENTRY", price: 0, desc: "Details pending...", img: null });
         app.save();
         app.renderGrid();
         app.open(id);
@@ -253,7 +249,6 @@ class Admin {
     }
 }
 
-// Global Initialization
 window.onload = () => {
     window.settings = new Settings();
     window.app = new App();

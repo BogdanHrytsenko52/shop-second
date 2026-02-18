@@ -3,76 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE-WEAR | Selected Apparel</title>
+    <title>RE-WEAR | Selected Apparel Store</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
-        body { 
+        /* КАСТОМНІ СТИЛІ ТА АНІМАЦІЇ */
+        :root {
+            --bg-color: #0A0A0A;
+            --accent-color: #E5E5E5;
+            --zinc-800: #27272a;
+        }
+
+        body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #0F0F0F; 
-            color: #E5E5E5; 
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            overflow-x: hidden;
         }
+
         .accent-font { font-family: 'Playfair Display', serif; }
-        .gradient-text {
-            background: linear-gradient(to right, #ffffff, #777777);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        /* Стилізація скролбару */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; }
+        ::-webkit-scrollbar-thumb { background: #27272a; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Анімація появи тексту */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        ::selection {
-            background: #ffffff;
-            color: #000000;
+
+        .reveal { animation: fadeInUp 1s ease forwards; }
+
+        /* Ефекти для карток */
+        .product-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .product-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-10px);
+        }
+
+        .image-zoom {
+            transition: transform 0.8s ease;
+        }
+
+        .product-card:hover .image-zoom {
+            transform: scale(1.05);
+        }
+
+        /* Модальне вікно */
+        #modal {
+            display: none;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .gradient-overlay {
+            background: linear-gradient(0deg, rgba(10,10,10,1) 0%, rgba(10,10,10,0) 100%);
+        }
+
+        .btn-modern {
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .btn-modern::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        .btn-modern:hover::after {
+            width: 100%;
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <nav class="fixed w-full z-50 bg-[#0F0F0F]/90 backdrop-blur-md p-8 flex justify-between items-center border-b border-zinc-900">
-        <div class="text-xl font-bold tracking-[0.3em] uppercase cursor-pointer" onclick="window.scrollTo(0,0)">Re—Wear</div>
-        <div class="space-x-12 text-[10px] uppercase tracking-[0.4em] hidden md:flex">
-            <a href="#about" class="text-zinc-400 hover:text-white transition duration-500">Про проєкт</a>
-            <a href="#contacts" class="text-zinc-400 hover:text-white transition duration-500">Контакти</a>
+    <nav class="fixed w-full z-50 bg-[#0A0A0A]/80 backdrop-blur-lg p-6 flex justify-between items-center border-b border-zinc-900/50">
+        <div class="text-xl font-bold tracking-[0.4em] uppercase cursor-pointer" onclick="window.scrollTo(0,0)">
+            RE—WEAR
+        </div>
+        
+        <div class="hidden md:flex space-x-10 text-[9px] uppercase tracking-[0.5em] font-light">
+            <a href="#catalog" class="btn-modern text-zinc-400 hover:text-white">Колекція</a>
+            <a href="#about" class="btn-modern text-zinc-400 hover:text-white">Про нас</a>
+            <a href="#contacts" class="btn-modern text-zinc-400 hover:text-white">Контакти</a>
+        </div>
+
+        <div class="flex items-center space-x-6">
+            <a href="https://t.me/your_telegram" class="text-zinc-400 hover:text-white transition">
+                <i class="fab fa-telegram-plane"></i>
+            </a>
+            <button class="md:hidden text-zinc-400">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </nav>
 
-    <section class="min-h-screen flex flex-col justify-center px-8 md:px-24 pt-20">
-        <h2 class="accent-font text-zinc-600 text-xl md:text-2xl mb-4 italic">Essential collection.</h2>
-        <h1 class="text-5xl md:text-9xl font-bold leading-[0.9] tracking-tighter mb-12 uppercase">
-            <span class="gradient-text">Selected<br>Apparel</span>
+    <section class="relative h-screen flex flex-col justify-center items-center text-center px-8 overflow-hidden">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-zinc-900/20 rounded-full blur-[120px] -z-10"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-zinc-800/10 rounded-full blur-[120px] -z-10"></div>
+
+        <h2 class="accent-font text-zinc-600 text-lg md:text-xl mb-6 italic reveal" style="animation-delay: 0.2s;">Spring Summer 2026</h2>
+        <h1 class="text-6xl md:text-[10rem] font-bold leading-none tracking-tighter mb-10 reveal" style="animation-delay: 0.4s;">
+            ESSENTIAL<br><span class="text-zinc-800">MODERN</span>
         </h1>
-        <div class="max-w-md text-zinc-500 text-sm leading-relaxed border-l border-zinc-800 pl-6 uppercase tracking-[0.2em]">
-            Кураторський підбір якісного одягу. <br>Тільки те, що варто вашої уваги.
+        
+        <a href="#catalog" class="reveal border border-zinc-700 px-10 py-4 text-[10px] uppercase tracking-[0.5em] hover:bg-white hover:text-black transition-all duration-500" style="animation-delay: 0.6s;">
+            Дивитись каталог
+        </a>
+    </section>
+
+    <section id="catalog" class="py-32 px-6 md:px-20 bg-[#0D0D0D]">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
+            <div>
+                <h2 class="text-xs uppercase tracking-[0.6em] text-zinc-600 mb-4">— New Drop</h2>
+                <h3 class="accent-font text-4xl md:text-6xl italic">Останні надходження</h3>
+            </div>
+            <div class="text-zinc-500 text-[10px] uppercase tracking-widest pb-2">
+                Всього позицій: 8
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-16">
+            
+            <div class="product-card group" onclick="openModal('Cobain Grunge Cardigan', '2 800 грн', 'Легендарний мохеровий кардиган у стилі гранж. Ідеальний стан, автентичний крій 90-х.', 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1000')">
+                <div class="aspect-[3/4] overflow-hidden bg-zinc-900 mb-6 relative">
+                    <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1000" alt="Cardigan" class="image-zoom w-full h-full object-cover grayscale group-hover:grayscale-0">
+                    <div class="absolute top-4 left-4 bg-white text-black text-[8px] font-bold px-2 py-1 uppercase tracking-tighter">Rare Find</div>
+                </div>
+                <h4 class="text-xs uppercase tracking-[0.2em] font-bold mb-2">Cobain Grunge Cardigan</h4>
+                <div class="flex justify-between items-center border-t border-zinc-800 pt-4">
+                    <span class="text-zinc-500 text-xs italic accent-font">Selected Archive</span>
+                    <span class="text-sm font-light">2 800 грн</span>
+                </div>
+            </div>
+
+            <div class="product-card group" onclick="openModal('Minimalist Trench', '3 200 грн', 'Класичний тренч вільного крою. Водовідштовхувальна тканина, італійська фурнітура.', 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1000')">
+                <div class="aspect-[3/4] overflow-hidden bg-zinc-900 mb-6">
+                    <img src="https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=1000" alt="Trench" class="image-zoom w-full h-full object-cover grayscale group-hover:grayscale-0">
+                </div>
+                <h4 class="text-xs uppercase tracking-[0.2em] font-bold mb-2">Heavy Cotton Trench</h4>
+                <div class="flex justify-between items-center border-t border-zinc-800 pt-4">
+                    <span class="text-zinc-500 text-xs italic accent-font">Outerwear</span>
+                    <span class="text-sm font-light">3 200 грн</span>
+                </div>
+            </div>
+
+            <div class="product-card group" onclick="openModal('Raw Denim 501', '1 900 грн', 'Вінтажні джинси в ідеальному стані. Щільний денім, прямий крій.', 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1000')">
+                <div class="aspect-[3/4] overflow-hidden bg-zinc-900 mb-6">
+                    <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1000" alt="Denim" class="image-zoom w-full h-full object-cover grayscale group-hover:grayscale-0">
+                </div>
+                <h4 class="text-xs uppercase tracking-[0.2em] font-bold mb-2">Vintage Raw Denim</h4>
+                <div class="flex justify-between items-center border-t border-zinc-800 pt-4">
+                    <span class="text-zinc-500 text-xs italic accent-font">Bottoms</span>
+                    <span class="text-sm font-light">1 900 грн</span>
+                </div>
+            </div>
+
+            <div class="product-card group" onclick="openModal('Wool Oversized Shirt', '1 500 грн', 'Вовняна сорочка в клітинку. Тепла та приємна до тіла.', 'https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1000')">
+                <div class="aspect-[3/4] overflow-hidden bg-zinc-900 mb-6">
+                    <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1000" alt="Shirt" class="image-zoom w-full h-full object-cover grayscale group-hover:grayscale-0">
+                </div>
+                <h4 class="text-xs uppercase tracking-[0.2em] font-bold mb-2">Wool Archive Shirt</h4>
+                <div class="flex justify-between items-center border-t border-zinc-800 pt-4">
+                    <span class="text-zinc-500 text-xs italic accent-font">Tops</span>
+                    <span class="text-sm font-light">1 500 грн</span>
+                </div>
+            </div>
+
+            <div class="product-card group">
+                <div class="aspect-[3/4] overflow-hidden bg-zinc-900/50 mb-6 flex items-center justify-center text-zinc-800 text-[10px] tracking-widest uppercase italic">Sold Out</div>
+                <h4 class="text-xs uppercase tracking-[0.2em] font-bold mb-2 opacity-50">Archive Blazer</h4>
+            </div>
+            <div class="product-card group">
+                <div class="aspect-[3/4] overflow-hidden bg-zinc-900/50 mb-6 flex items-center justify-center text-zinc-800 text-[10px] tracking-widest uppercase italic">Coming Soon</div>
+                <h4 class="text-xs uppercase tracking-[0.2em] font-bold mb-2 opacity-50">Leather Boots</h4>
+            </div>
+            <div class="product-card group">
+                <div class="aspect-[3/4] overflow-hidden bg-zinc-900/50 mb-6 flex items-center justify-center text-zinc-800 text-[10px] tracking-widest uppercase italic">Coming Soon</div>
+                <h4 class="text-xs uppercase tracking-[0.2em] font-bold mb-2 opacity-50">Silk Scarf</h4>
+            </div>
+            <div class="product-card group">
+                <div class="aspect-[3/4] overflow-hidden bg-zinc-900/50 mb-6 flex items-center justify-center text-zinc-800 text-[10px] tracking-widest uppercase italic">Coming Soon</div>
+                <h4 class="text-xs uppercase tracking-[0.2em] font-bold mb-2 opacity-50">Cargo Pants</h4>
+            </div>
+
         </div>
     </section>
 
-    <section id="about" class="min-h-screen px-8 md:px-24 flex flex-col justify-center bg-[#141414] border-y border-zinc-900">
-        <div class="max-w-4xl">
-            <h2 class="text-xs uppercase tracking-[0.5em] text-zinc-600 mb-12">— Про проєкт</h2>
-            <p class="accent-font text-3xl md:text-5xl leading-tight mb-8">
-                Ми створюємо гардероб, який базується на якості, формі та позачасовому стилі.
+    <section id="about" class="min-h-screen px-6 md:px-24 flex flex-col justify-center border-t border-zinc-900">
+        <div class="max-w-5xl">
+            <h2 class="text-xs uppercase tracking-[0.6em] text-zinc-700 mb-16">— Our Philosophy</h2>
+            <p class="accent-font text-4xl md:text-7xl leading-tight mb-16 reveal">
+                Ми відмовляємося від швидкоплинного, обираючи <span class="text-zinc-600 italic">справжнє</span>.
             </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16 text-zinc-400 text-sm leading-relaxed uppercase tracking-wider font-light">
-                <div>
-                    RE-WEAR — це відповідь на надмірне споживання. Ми фокусуємося на пошуку речей, які поєднують у собі чудовий крій та довговічність. У нашому каталозі ви знайдете як базові елементи гардероба, так і унікальні вінтажні знахідки, що ідеально вписуються в сучасний образ.
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-20 text-zinc-500 text-sm leading-relaxed uppercase tracking-[0.1em] font-light">
+                <div class="reveal" style="animation-delay: 0.2s;">
+                    <p class="mb-6">Кожна одиниця одягу в RE-WEAR проходить цикл відновлення: від ретельного відбору на закритих стоках до професійної обробки. Ми не просто продаємо речі, ми зберігаємо культуру якісного крою та довговічних матеріалів.</p>
+                    <p>Наш асортимент — це баланс між строгим мінімалізмом та яскравими акцентами минулих епох.</p>
                 </div>
-                <div>
-                    Кожна річ проходить ретельну перевірку та підготовку. Ми віримо, що гарний одяг не обов'язково має бути новим — він має бути якісним та справжнім. Це ваш шанс знайти особливі речі без компромісів із власною ідентичністю.
+                <div class="reveal" style="animation-delay: 0.4s;">
+                    <p class="mb-6">Ми віримо, що гардероб має бути свідомим. Купівля вживаного одягу преміальної якості — це не тільки про стиль, а й про повагу до ресурсів планети та майстерності кравців минулого.</p>
+                    <p>RE-WEAR — це твоя база, яка не вийде з моди через сезон.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="contacts" class="py-32 px-8 md:px-24 text-center">
-        <h2 class="text-xs uppercase tracking-[0.5em] text-zinc-600 mb-8">Ми на зв'язку</h2>
-        <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12 text-2xl md:text-4xl font-bold">
-            <a href="#" class="hover:text-zinc-500 transition duration-500 uppercase tracking-tighter">Instagram</a>
-            <a href="#" class="hover:text-zinc-500 transition duration-500 uppercase tracking-tighter">Telegram</a>
+    <section id="contacts" class="py-40 bg-zinc-950 px-6 text-center border-t border-zinc-900">
+        <h2 class="text-[10px] uppercase tracking-[1em] text-zinc-700 mb-12">Connect with us</h2>
+        <div class="flex flex-col md:flex-row justify-center items-center gap-12 text-3xl md:text-6xl font-bold tracking-tighter">
+            <a href="https://instagram.com" class="hover:text-zinc-600 transition-all duration-700">INSTAGRAM</a>
+            <span class="hidden md:block text-zinc-900">/</span>
+            <a href="https://t.me/your_telegram" class="hover:text-zinc-600 transition-all duration-700">TELEGRAM</a>
         </div>
-        <p class="mt-16 text-zinc-700 text-[10px] uppercase tracking-widest italic">Нові надходження незабаром.</p>
+        
+        <div class="mt-32 max-w-lg mx-auto border border-zinc-900 p-8">
+            <h4 class="text-[10px] uppercase tracking-widest mb-4">Підписатись на оновлення</h4>
+            <div class="flex border-b border-zinc-800 pb-2">
+                <input type="email" placeholder="YOUR EMAIL" class="bg-transparent w-full text-[10px] outline-none placeholder:text-zinc-800">
+                <button class="text-[10px] tracking-widest hover:text-zinc-500 transition">SEND</button>
+            </div>
+        </div>
     </section>
 
-    <footer class="p-12 border-t border-zinc-900 text-[10px] uppercase tracking-[0.5em] text-center text-zinc-800">
-        © 2026 RE-WEAR — Selected Second Hand Store
+    <footer class="p-10 text-center border-t border-zinc-900 text-[9px] uppercase tracking-[0.8em] text-zinc-800">
+        © 2026 RE-WEAR STORE — BASED IN KYIV — WORLDWIDE SHIPPING
     </footer>
 
+    <div id="modal" class="fixed inset-0 z-[100] p-4 flex items-center justify-center">
+        <div class="bg-zinc-950 w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-zinc-800 flex flex-col md:flex-row shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-xl z-10 hover:text-zinc-500">&times;</button>
+            
+            <div class="w-full md:w-1/2 aspect-[3/4]">
+                <img id="modal-img" src="" class="w-full h-full object-cover grayscale" alt="Product">
+            </div>
+            
+            <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                <h3 id="modal-title" class="text-3xl font-bold uppercase tracking-tighter mb-4">Title</h3>
+                <p id="modal-price" class="accent-font text-zinc-500 text-xl mb-8 italic">Price</p>
+                <div class="h-[1px] w-full bg-zinc-900 mb-8"></div>
+                <p id="modal-desc" class="text-zinc-400 text-sm leading-relaxed mb-12 font-light">Description</p>
+                
+                <button onclick="sendOrder()" class="w-full bg-white text-black py-5 text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-zinc-200 transition">
+                    Замовити через Telegram
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        let currentItem = '';
+
+        // Відкрити вікно
+        function openModal(title, price, desc, img) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-price').innerText = price;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-img').src = img;
+            currentItem = title;
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Закрити вікно
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Відправити замовлення
+        function sendOrder() {
+            const message = `Привіт! Мене цікавить ця річ: ${currentItem}`;
+            const url = `https://t.me/your_telegram?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Закриття модалки по кліку поза нею
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Анімація появи при скролі
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section, .product-card').forEach((el) => {
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>

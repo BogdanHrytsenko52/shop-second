@@ -3,5 +3,216 @@
    ========================================= */
 :root {
     --bg-deep: linear-gradient(-45deg, #0f0514, #050a14, #000000, #0a0300);
-    /* ... і так далі весь CSS ... */
+    --bg-pure: #000000;
+    --accent: #ffffff;
+    --text-dim: #666;
+    --border: rgba(255, 255, 255, 0.15);
+    --font-main: 'Inter', sans-serif;
+    --ease: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+
+body {
+    background: var(--bg-deep);
+    background-size: 400% 400%;
+    animation: gradientBG 25s ease infinite;
+    color: var(--accent);
+    font-family: var(--font-main);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    overflow-x: hidden;
+    font-size: 12px;
+    transition: background 0.5s;
+}
+
+body.pure-black {
+    background: var(--bg-pure);
+    animation: none;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* NOISE OVERLAY */
+body::before {
+    content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; mix-blend-mode: overlay;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #333; }
+
+/* =========================================
+   2. UI KIT
+   ========================================= */
+.btn {
+    background: var(--accent); color: #000;
+    border: 1px solid var(--accent);
+    padding: 14px 24px; font-weight: 700; cursor: pointer;
+    transition: 0.2s; font-size: 11px; letter-spacing: 1px;
+    display: inline-flex; justify-content: center; align-items: center;
+}
+.btn:hover { background: transparent; color: var(--accent); }
+.btn:active { transform: scale(0.98); }
+
+.btn-outline {
+    background: transparent; color: var(--text-dim);
+    border: 1px solid var(--border); padding: 12px;
+    cursor: pointer; transition: 0.2s; font-weight: 600;
+    display: inline-flex; justify-content: center; align-items: center;
+}
+.btn-outline:hover, .btn-outline.active { border-color: var(--accent); color: var(--accent); background: rgba(255,255,255,0.05); }
+
+.input-std {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: #fff; padding: 15px; width: 100%;
+    font-family: inherit; font-size: 14px;
+    transition: 0.3s; margin-bottom: 10px;
+}
+.input-std:focus { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+/* =========================================
+   3. HEADER & HERO
+   ========================================= */
+header {
+    position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 40px; z-index: 100;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+
+.logo { font-weight: 900; font-size: 18px; letter-spacing: 3px; cursor: pointer; }
+.nav-link { cursor: pointer; color: var(--text-dim); font-size: 11px; transition: 0.3s; font-weight: 600; }
+.nav-link:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+.container { padding: 140px 40px 40px; max-width: 1800px; margin: 0 auto; }
+
+.hero-text {
+    font-size: clamp(3rem, 12vw, 10rem);
+    font-weight: 800; line-height: 0.85; letter-spacing: -0.04em;
+    margin-bottom: 60px; opacity: 0.95;
+    transition: opacity 0.5s;
+}
+.hero-text:hover { opacity: 1; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
+
+/* =========================================
+   4. GRID SYSTEM
+   ========================================= */
+.grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.card { cursor: pointer; position: relative; }
+.card-img-box {
+    width: 100%; aspect-ratio: 0.8; background: rgba(20,20,20,0.5);
+    overflow: hidden; position: relative;
+}
+.card-img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(100%) contrast(1.1);
+    transition: 0.6s var(--ease); opacity: 0.8;
+}
+.card:hover .card-img { filter: grayscale(0) contrast(1); transform: scale(1.05); opacity: 1; }
+
+.card-info {
+    display: flex; justify-content: space-between; margin-top: 15px;
+    border-top: 1px solid var(--border); padding-top: 12px;
+}
+.card-title { font-weight: 700; font-size: 12px; }
+.card-price { font-family: monospace; color: #aaa; }
+
+/* =========================================
+   5. MODAL (PRODUCT VIEW)
+   ========================================= */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
+    z-index: 2000; opacity: 0; visibility: hidden;
+    transition: 0.4s var(--ease); display: flex; align-items: center; justify-content: center;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+
+.modal-content {
+    width: 95%; height: 90%; max-width: 1500px;
+    background: #050505; border: 1px solid var(--border);
+    display: flex; overflow: hidden; position: relative;
+    box-shadow: 0 0 100px rgba(0,0,0,0.8);
+}
+
+.modal-close {
+    position: absolute; top: 20px; right: 20px; z-index: 10;
+    width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border); background: #000; color: #fff; cursor: pointer;
+}
+.modal-close:hover { background: #fff; color: #000; }
+
+.modal-img-col { flex: 1.5; background: #080808; position: relative; }
+.modal-img-col img { width: 100%; height: 100%; object-fit: cover; }
+
+.modal-info-col {
+    flex: 1; padding: 60px; display: flex; flex-direction: column;
+    border-left: 1px solid var(--border); overflow-y: auto;
+}
+
+.modal-title { font-size: 40px; font-weight: 800; line-height: 1; margin-bottom: 10px; }
+.modal-price { font-size: 24px; font-family: monospace; margin-bottom: 40px; color: #bbb; }
+.modal-desc { font-size: 13px; line-height: 1.7; color: #888; margin-bottom: auto; max-width: 90%; }
+
+/* =========================================
+   6. DRAWERS & SETTINGS
+   ========================================= */
+.drawer {
+    position: fixed; top: 0; right: -100%;
+    width: 450px; height: 100%;
+    background: rgba(8, 8, 8, 0.98); backdrop-filter: blur(20px);
+    z-index: 2500; border-left: 1px solid var(--border);
+    transition: 0.5s var(--ease); padding: 40px;
+    display: flex; flex-direction: column;
+}
+.drawer.open { right: 0; }
+
+.backdrop {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 2400;
+    opacity: 0; visibility: hidden; transition: 0.3s;
+}
+.backdrop.active { opacity: 1; visibility: visible; }
+
+.settings-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;
+}
+.setting-card {
+    border: 1px solid var(--border); padding: 15px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: 0.3s; cursor: pointer;
+}
+.setting-card:hover { border-color: #fff; background: rgba(255,255,255,0.03); }
+.setting-card.active { border-color: var(--accent); background: #fff; color: #000; }
+.setting-label { font-size: 9px; opacity: 0.7; margin-bottom: 5px; }
+.setting-val { font-weight: 700; font-size: 12px; }
+
+.section-title { font-size: 10px; color: var(--text-dim); margin: 30px 0 15px; font-weight: 700; letter-spacing: 2px; }
+
+/* CART */
+.cart-item { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+.cart-thumb { width: 60px; height: 80px; background: #222; object-fit: cover; }
+
+/* ADMIN */
+.status-badge { display: inline-block; padding: 8px 12px; background: rgba(0,255,0,0.1); color: #0f0; font-size: 10px; margin-bottom: 20px; border: 1px solid #0f0; }
+
+@media (max-width: 900px) {
+    .hero-text { font-size: 14vw; }
+    .drawer { width: 100%; }
+    .modal-content { flex-direction: column; width: 100%; height: 100%; border:none; }
+    .modal-img-col { height: 45%; }
+    .modal-info-col { height: 55%; padding: 30px; }
 }

@@ -3,51 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE—WEAR | Second Hand Online</title>
+    <title>RE—WEAR | Modern Second Hand</title>
     <style>
-        /* Основні налаштування сторінки */
-        body, html {
+        /* Матовий чорний фон з легким градієнтом для глибини */
+        body {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #121212; /* Темний фон */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            background-color: #0f0f0f; /* Глибокий матовий чорний */
+            color: #ffffff;
+            font-family: 'Inter', sans-serif; /* Потрібно підключити або використовувати системний */
+            text-transform: uppercase;
         }
 
-        /* Стиль для назви */
-        .brand-container {
-            text-align: center;
+        /* Навігація зверху (як на референсах) */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* Головна назва */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 40px;
         }
 
         h1 {
-            color: #ffffff;
-            font-size: 5rem; /* Великий розмір */
-            letter-spacing: 0.5rem;
-            text-transform: uppercase;
+            font-size: clamp(4rem, 15vw, 12rem); /* Динамічний розмір */
+            line-height: 0.9;
             margin: 0;
-            font-weight: 200; /* Тонкий шрифт для елегантності */
-            border-bottom: 2px solid #ffffff; /* Лінія під назвою */
-            padding-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: -2px;
         }
 
-        p {
+        .sub-title {
+            font-size: 14px;
+            letter-spacing: 5px;
+            margin-top: 20px;
             color: #888;
-            letter-spacing: 0.2rem;
-            margin-top: 15px;
-            font-size: 0.9rem;
+        }
+
+        /* Елемент декору (сітка або лінія) */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 50px;
         }
     </style>
 </head>
 <body>
 
-    <div class="brand-container">
+    <nav>
+        <div class="nav-links">
+            <span>Shop</span>
+            <span>Collections</span>
+            <span>Archive</span>
+        </div>
+        <div style="font-size: 12px;">Cart (0)</div>
+    </nav>
+
+    <div class="hero">
+        <p class="sub-title">Premium Second Hand Studio</p>
         <h1>RE—WEAR</h1>
-        <p>SUSTAINABLE FASHION HUB</p>
+        <div class="divider"></div>
+        <p style="font-size: 10px; color: #444; margin-top: 10px;">Est. 2026 / Kyiv, Ukraine</p>
     </div>
 
 </body>

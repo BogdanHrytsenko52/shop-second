@@ -1,5 +1,5 @@
 // ============================================================
-// 1. ПІДКЛЮЧЕННЯ FIREBASE (GOOGLE DATABASE)
+// 1. ПІДКЛЮЧЕННЯ FIREBASE
 // ============================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -8,7 +8,6 @@ import { getDatabase, ref, push, onValue, remove, update } from "https://www.gst
 const firebaseConfig = {
   apiKey: "AIzaSyATJJPdiTWusShpRRZl2_KGLE4gIodM5SA",
   authDomain: "rewear-shop.firebaseapp.com",
-  // Я додав цей рядок, щоб база точно працювала в Європі:
   databaseURL: "https://rewear-shop-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "rewear-shop",
   storageBucket: "rewear-shop.firebasestorage.app",
@@ -19,10 +18,10 @@ const firebaseConfig = {
 // Ініціалізація бази
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const productsRef = ref(db, 'products'); // Гілка з товарами
+const productsRef = ref(db, 'products');
 
 // ============================================================
-// 2. НАЛАШТУВАННЯ ТА СИСТЕМА
+// 2. СИСТЕМА (ПЕРЕКЛАДИ, АУДІО, ЛОГІКА)
 // ============================================================
 
 const dict = {
@@ -79,9 +78,11 @@ class Settings {
     constructor() {
         this.currency = 'USD';
         this.soundEnabled = true;
+        this.theme = 'matte';
     }
     setTheme(mode) {
         playClick();
+        this.theme = mode;
         document.body.className = '';
         document.body.classList.add('theme-' + mode);
         document.getElementById('themeMatte').className = mode === 'matte' ? 'setting-card active' : 'setting-card';
@@ -107,7 +108,7 @@ class Settings {
         return `${symbols[this.currency]}${val}`;
     }
     reset() {
-        alert("System Reset. Reloading...");
+        alert("System Reset. Refreshing...");
         location.reload();
     }
 }
@@ -119,20 +120,16 @@ class App {
         this.currId = null;
         this.lang = 'en';
         
-        // СЛУХАЄМО БАЗУ ДАНИХ (Realtime Listener)
+        // Слухаємо базу
         onValue(productsRef, (snapshot) => {
             const data = snapshot.val();
             this.products = [];
             if (data) {
-                // Конвертуємо об'єкт бази в масив
                 Object.keys(data).forEach(key => {
-                    this.products.push({
-                        dbKey: key, // Унікальний ключ Firebase
-                        ...data[key]
-                    });
+                    this.products.push({ dbKey: key, ...data[key] });
                 });
             }
-            this.products.reverse(); // Нові зверху
+            this.products.reverse();
             this.renderGrid();
         });
     }
@@ -173,7 +170,7 @@ class App {
         document.getElementById('mTitle').innerText = p.name;
         document.getElementById('mPrice').innerText = window.settings.formatPrice(p.price);
         document.getElementById('mDesc').innerText = p.desc || "No data.";
-        document.getElementById('mId').innerText = p.dbKey.substring(1, 6); // Short ID
+        document.getElementById('mId').innerText = p.dbKey.substring(1, 6);
         
         const imgEl = document.getElementById('mImg');
         imgEl.src = p.img || '';
@@ -279,7 +276,6 @@ class Admin {
         window.app.renderGrid();
     }
     create() {
-        // ВІДПРАВКА В FIREBASE
         push(productsRef, {
             name: "NEW ITEM",
             price: 0,
@@ -300,7 +296,6 @@ class Admin {
     }
     saveChanges() {
         playClick();
-        // ОНОВЛЕННЯ В FIREBASE
         const dbKey = window.app.currId;
         const updates = {
             name: document.getElementById('eTitle').value.toUpperCase(),
@@ -308,16 +303,13 @@ class Admin {
             desc: document.getElementById('eDesc').value
         };
         if(this.tempImg) updates.img = this.tempImg;
-
         update(ref(db, 'products/' + dbKey), updates);
-        
         this.tempImg = null;
         window.ui.closeModal();
     }
     deleteCurrent() {
         playClick();
         if(confirm('DELETE PERMANENTLY?')) {
-            // ВИДАЛЕННЯ З FIREBASE
             remove(ref(db, 'products/' + window.app.currId));
             window.ui.closeModal();
         }

@@ -8,23 +8,23 @@
 
 /* THEME 1: MATTE BLACK (Default) */
 body.theme-matte {
-    --bg: #050505;           /* Глухий чорний */
-    --surface: #0a0a0a;      /* Ледь світліший для карток */
-    --surface-hover: #111;   /* При наведенні */
+    --bg: #050505;
+    --surface: #0a0a0a;
+    --surface-hover: #111;
     --accent: #ffffff;
     --text-sec: #666;
-    --border: rgba(255, 255, 255, 0.08); /* Дуже тонка рамка */
+    --border: rgba(255, 255, 255, 0.08);
     --glass: rgba(5, 5, 5, 0.9);
 }
 
 /* THEME 2: MODERN GREY (Tech) */
 body.theme-modern {
-    --bg: #121212;           /* Темно-сірий фон */
-    --surface: #1e1e1e;      /* Світліші панелі */
+    --bg: #121212;
+    --surface: #1e1e1e;
     --surface-hover: #252525;
     --accent: #e0e0e0;
     --text-sec: #888;
-    --border: rgba(255, 255, 255, 0.2); /* Більш помітна рамка */
+    --border: rgba(255, 255, 255, 0.2);
     --glass: rgba(30, 30, 30, 0.9);
 }
 
@@ -40,10 +40,10 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 12px;
-    transition: background-color 0.5s, color 0.5s; /* Плавна зміна теми */
+    transition: background-color 0.5s, color 0.5s;
 }
 
-/* Noise Texture (Grain) */
+/* Noise Texture */
 body::before {
     content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
@@ -82,6 +82,8 @@ body::before {
 .input-std:focus { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
 .divider { height: 1px; background: var(--border); margin: 20px 0; width: 100%; }
+
+.status-badge { display: inline-block; padding: 5px 10px; border: 1px solid #0f0; color: #0f0; font-size: 10px; margin-bottom: 20px; }
 
 /* =========================================
    4. LAYOUT
@@ -167,7 +169,6 @@ header {
 }
 .setting-card:hover { border-color: var(--accent); }
 .setting-card.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-.setting-card.active .setting-label { opacity: 0.6; } /* Label color inside active card */
 
 .setting-val { font-weight: 800; font-size: 11px; }
 .setting-label { font-size: 9px; opacity: 0.5; margin-top: 5px; }

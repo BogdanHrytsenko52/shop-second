@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE—WEAR | Archive</title>
+    <title>RE—WEAR | Архів</title>
     <style>
-        /* Глибокий матовий фон */
+        /* Матовий глибокий чорний */
         body {
             margin: 0;
             padding: 0;
@@ -13,6 +13,7 @@
             color: #ffffff;
             font-family: 'Inter', -apple-system, sans-serif;
             text-transform: uppercase;
+            overflow-x: hidden;
         }
 
         /* Тонка верхня панель */
@@ -28,50 +29,10 @@
             z-index: 100;
         }
 
-        /* Назва зліва */
         .brand {
             font-size: 13px;
             font-weight: 900;
             letter-spacing: 1.5px;
-        }
-
-        /* Опис (дуже дрібний, поруч з брендом) */
-        .description {
-            font-size: 8px;
-            color: #555;
-            margin-left: 20px;
-            letter-spacing: 0.5px;
-            display: none; /* Можна приховати на малих екранах */
-        }
-        @media (min-width: 768px) { .description { display: block; } }
-
-        /* Права частина: Пошук + Кошик */
-        .nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
-
-        /* Компактний пошук */
-        .search-wrapper {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 2px;
-        }
-
-        .search-input {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 10px;
-            outline: none;
-            width: 120px;
-            text-transform: uppercase;
-        }
-
-        .search-input::placeholder {
-            color: #444;
         }
 
         /* Кнопка кошика */
@@ -82,55 +43,132 @@
             font-size: 10px;
             cursor: pointer;
             letter-spacing: 1px;
-            padding: 0;
-            position: relative;
+            text-transform: uppercase;
         }
 
-        .cart-count {
-            font-size: 8px;
-            color: #888;
-            margin-left: 3px;
-        }
-
-        /* Основний контент (заглушка) */
-        .hero-spacer {
-            height: 40vh;
+        /* Секція пошуку (окремо від панелі кнопок) */
+        .search-bar {
+            padding: 20px 30px;
             display: flex;
-            align-items: center;
-            padding: 40px;
+            justify-content: flex-end;
         }
 
-        .hero-text {
+        .search-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #333;
+            color: #fff;
             font-size: 11px;
-            color: #444;
-            letter-spacing: 2px;
+            width: 200px;
+            outline: none;
+            padding-bottom: 5px;
+            text-transform: uppercase;
         }
+
+        .search-input:focus {
+            border-bottom: 1px solid #fff;
+        }
+
+        /* Стиль кошика (бічна панель) */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            right: -100%; /* Спочатку захований */
+            width: 350px;
+            height: 100%;
+            background: #111;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 40px;
+            box-sizing: border-box;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cart-overlay.active {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 20px;
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .close-cart:hover { color: #fff; }
+
+        .cart-content {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        /* Задній фон при відкритому кошику */
+        .blur-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            z-index: 999;
+        }
+
+        .blur-bg.active { display: block; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="display: flex; align-items: center;">
-            <div class="brand">RE—WEAR</div>
-            <div class="description">Sustainable Archive Studio</div>
-        </div>
+    <div class="blur-bg" id="blur"></div>
 
-        <div class="nav-controls">
-            <div class="search-wrapper">
-                <input type="text" class="search-input" placeholder="Search...">
-            </div>
-            <button class="cart-btn">
-                Cart <span class="cart-count">(0)</span>
-            </button>
+    <div class="cart-overlay" id="cart">
+        <div class="cart-header">
+            <span style="font-size: 14px; font-weight: 700;">Кошик</span>
+            <button class="close-cart" onclick="toggleCart()">Закрити</button>
         </div>
+        <div class="cart-content">
+            Ваш кошик порожній.
+        </div>
+    </div>
+
+    <header>
+        <div class="brand">RE—WEAR</div>
+        <button class="cart-btn" onclick="toggleCart()">Кошик (0)</button>
     </header>
 
-    <main class="hero-spacer">
-        <div class="hero-text">
-            // Selection 2026 <br>
-            Curated Second Hand
-        </div>
+    <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Пошук по архіву...">
+    </div>
+
+    <main style="padding: 40px 30px;">
+        <p style="font-size: 10px; color: #333;">// Вибірка 2026</p>
     </main>
+
+    <script>
+        function toggleCart() {
+            document.getElementById('cart').classList.toggle('active');
+            document.getElementById('blur').classList.toggle('active');
+        }
+
+        // Закриття при кліку на фон
+        document.getElementById('blur').onclick = function() {
+            toggleCart();
+        };
+    </script>
 
 </body>
 </html>

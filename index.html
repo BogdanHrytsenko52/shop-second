@@ -3,162 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE—WEAR | Modern Archive Studio</title>
+    <title>RE—WEAR / Авангардний Архів</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* ==========================================================================
-           1. CORE RESET & BASE STYLES
-           ========================================================================== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            outline: none;
+        /* =========================================
+           1. ДИЗАЙН-СИСТЕМА ТА ЗМІННІ
+           =========================================
+        */
+        :root {
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --accent: #ffffff;
+            --text-main: #ffffff;
+            --text-dim: #555555;
+            --border: rgba(255, 255, 255, 0.05);
+            --glass: rgba(255, 255, 255, 0.02);
+            --error: #ff3b30;
+            --header-h: 70px;
+            --font-main: 'Inter', sans-serif;
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        html {
-            scroll-behavior: smooth;
-            background-color: #050505;
+        /* =========================================
+           2. ГЛОБАЛЬНЕ СКИНУТТЯ ТА БАЗА
+           =========================================
+        */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #050505;
-            color: #ffffff;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 13px;
-            line-height: 1.5;
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-main);
             text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1.4;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ==========================================================================
-           2. GLOBAL VARIABLES
-           ========================================================================== */
-        :root {
-            --bg: #050505;
-            --surface: #0f0f0f;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-active: rgba(255, 255, 255, 0.3);
-            --text-muted: #666;
-            --accent: #ffffff;
-            --error: #ff3b30;
-            --header-h: 65px;
-            --drawer-w: 400px;
-            --transition: cubic-bezier(0.19, 1, 0.22, 1);
-        }
+        /* Кастомний скролбар (тонкий та мінімалістичний) */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; }
+        ::-webkit-scrollbar-thumb:hover { background: #444; }
 
-        /* ==========================================================================
-           3. UI COMPONENTS (BUTTONS & INPUTS)
-           ========================================================================== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 25px;
-            background: #fff;
-            color: #000;
+        /* =========================================
+           3. КОМПОНЕНТИ ТА КНОПКИ
+           =========================================
+        */
+        .btn-modern {
+            position: relative;
+            padding: 14px 28px;
+            background: var(--accent);
+            color: var(--bg);
+            border: 1px solid var(--accent);
             font-weight: 700;
-            font-size: 11px;
-            letter-spacing: 1px;
-            border: 1px solid #fff;
+            font-size: 10px;
             cursor: pointer;
-            transition: all 0.3s var(--transition);
+            overflow: hidden;
+            transition: var(--transition);
         }
 
-        .btn:hover {
+        .btn-modern:hover {
             background: transparent;
-            color: #fff;
+            color: var(--accent);
         }
 
-        .btn-outline {
+        .btn-secondary {
             background: transparent;
-            color: #fff;
-            border: 1px solid var(--border-active);
-        }
-
-        .btn-outline:hover {
-            border-color: #fff;
-        }
-
-        .input-main {
-            width: 100%;
-            background: #111;
+            color: var(--text-dim);
             border: 1px solid var(--border);
-            color: #fff;
-            padding: 14px;
-            font-size: 12px;
-            margin-bottom: 15px;
+            padding: 10px 20px;
+            font-size: 9px;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
-        .input-main:focus {
-            border-color: #fff;
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
-        /* ==========================================================================
-           4. HEADER & NAVIGATION
-           ========================================================================== */
+        /* =========================================
+           4. НАВІГАЦІЯ (GLASSMORPHISM)
+           =========================================
+        */
         header {
             position: fixed;
             top: 0;
-            left: 0;
             width: 100%;
             height: var(--header-h);
-            background: rgba(5, 5, 5, 0.8);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 40px;
+            padding: 0 4vw;
+            z-index: 1000;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
         }
 
         .logo {
             font-weight: 900;
-            letter-spacing: 3px;
-            font-size: 16px;
+            font-size: 18px;
+            letter-spacing: 4px;
+            mix-blend-mode: difference;
         }
 
-        .nav-right {
+        .nav-group {
             display: flex;
-            gap: 30px;
+            gap: 40px;
             align-items: center;
         }
 
         .nav-link {
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 10px;
+            font-weight: 400;
             cursor: pointer;
-            color: var(--text-muted);
-            transition: color 0.3s;
+            color: var(--text-dim);
+            transition: var(--transition);
         }
 
-        .nav-link:hover, .nav-link.active {
-            color: #fff;
+        .nav-link:hover {
+            color: var(--accent);
+            letter-spacing: 0.15em;
         }
 
-        /* ==========================================================================
-           5. HERO & SEARCH
-           ========================================================================== */
+        /* =========================================
+           5. HERO & ТИПОГРАФІКА
+           =========================================
+        */
         .hero {
-            padding-top: 150px;
-            padding-bottom: 50px;
-            text-align: center;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 4vw;
+            border-bottom: 1px solid var(--border);
         }
 
-        .hero h1 {
-            font-size: clamp(2rem, 8vw, 6rem);
-            font-weight: 800;
-            letter-spacing: -2px;
-            line-height: 0.9;
-            margin-bottom: 40px;
+        .hero-title {
+            font-size: clamp(3rem, 12vw, 15rem);
+            font-weight: 900;
+            line-height: 0.8;
+            letter-spacing: -0.05em;
+            margin-bottom: 20px;
         }
 
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-            padding: 0 20px;
+        .hero-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 40px;
+        }
+
+        .search-wrap {
+            width: 100%;
+            max-width: 400px;
         }
 
         .search-input {
@@ -166,45 +175,40 @@
             background: transparent;
             border: none;
             border-bottom: 1px solid var(--border);
-            font-size: 18px;
-            padding: 15px 0;
-            color: #fff;
-            text-align: center;
-            transition: border-color 0.4s;
+            color: var(--accent);
+            padding: 10px 0;
+            font-size: 14px;
+            font-weight: 200;
+            transition: var(--transition);
         }
 
         .search-input:focus {
-            border-bottom-color: #fff;
+            border-bottom-color: var(--accent);
         }
 
-        /* ==========================================================================
-           6. PRODUCT GRID
-           ========================================================================== */
-        .grid-wrapper {
-            max-width: 1600px;
-            margin: 50px auto;
-            padding: 0 40px;
+        /* =========================================
+           6. КАТАЛОГ (GRID SYSTEM)
+           =========================================
+        */
+        .catalog-container {
+            padding: 100px 4vw;
         }
 
         .catalog-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2px;
-            background: var(--border);
-            border: 1px solid var(--border);
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 60px;
         }
 
         .product-card {
-            background: var(--bg);
             position: relative;
-            aspect-ratio: 3/4;
-            overflow: hidden;
-            cursor: pointer;
+            background: var(--surface);
+            transition: var(--transition);
         }
 
-        .product-img-box {
+        .img-container {
             width: 100%;
-            height: 80%;
+            aspect-ratio: 4/5;
             background: #111;
             overflow: hidden;
             position: relative;
@@ -214,362 +218,254 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.8;
-            transition: all 0.6s var(--transition);
+            filter: saturate(0.2);
+            transition: var(--transition);
         }
 
         .product-card:hover .product-img {
-            opacity: 1;
+            filter: saturate(1);
             transform: scale(1.05);
         }
 
-        .product-info {
-            padding: 20px;
+        .card-info {
+            padding: 25px 0;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border);
         }
 
-        .product-title {
-            font-weight: 700;
+        .product-name {
             font-size: 12px;
+            font-weight: 700;
         }
 
         .product-price {
-            color: var(--text-muted);
             font-family: monospace;
+            color: var(--text-dim);
         }
 
-        /* Admin Controls on Card */
-        .admin-delete-btn {
+        /* Admin Controls */
+        .del-badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 30px;
-            height: 30px;
-            background: rgba(0,0,0,0.8);
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg);
             border: 1px solid var(--error);
             color: var(--error);
-            display: none; /* Only in admin mode */
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 10;
+            font-size: 20px;
         }
 
-        /* ==========================================================================
-           7. DRAWERS & BACKDROP
-           ========================================================================== */
-        .drawer-backdrop {
+        /* =========================================
+           7. DRAWERS (BEYOND THE SURFACE)
+           =========================================
+        */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 450px;
+            max-width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 2000;
+            transition: var(--transition);
+            border-left: 1px solid var(--border);
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.open { right: 0; }
+
+        .backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1500;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
             opacity: 0;
             visibility: hidden;
+            z-index: 1900;
             transition: 0.4s;
         }
 
-        .drawer-backdrop.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .backdrop.active { opacity: 1; visibility: visible; }
 
-        .drawer {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: var(--drawer-w);
-            max-width: 100%;
-            height: 100%;
-            background: #0a0a0a;
-            z-index: 1600;
-            transition: 0.5s var(--transition);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .drawer.open {
-            right: 0;
-        }
-
-        .drawer-header {
-            padding: 30px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .drawer-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* ==========================================================================
-           8. CART ITEMS
-           ========================================================================== */
-        .cart-item {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .cart-item-img {
-            width: 70px;
-            height: 90px;
-            background: #1a1a1a;
-            object-fit: cover;
-        }
-
-        .cart-item-info {
-            flex: 1;
-        }
-
-        /* ==========================================================================
-           9. SETTINGS & ADMIN PANEL
-           ========================================================================== */
-        .lang-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 40px;
-        }
-
-        .lang-btn {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            font-size: 10px;
-        }
-
-        .lang-btn.active {
-            background: #fff;
-            color: #000;
-            border-color: #fff;
-        }
-
-        .admin-login-box {
-            padding-top: 30px;
-            border-top: 1px solid var(--border);
-        }
-
-        #adminDashboard {
-            display: none;
-        }
-
-        .upload-placeholder {
+        /* =========================================
+           8. ADMIN & LOGIC ELEMENTS
+           =========================================
+        */
+        .admin-dashboard { display: none; margin-top: 30px; }
+        .upload-area {
             width: 100%;
-            height: 150px;
-            border: 1px dashed var(--border-active);
+            height: 200px;
+            border: 1px dashed var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            color: var(--text-muted);
             margin-bottom: 20px;
             cursor: pointer;
             background-size: cover;
             background-position: center;
+            font-size: 10px;
+            color: var(--text-dim);
         }
 
-        /* ==========================================================================
-           10. ANIMATIONS & MISC
-           ========================================================================== */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .admin-input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            font-size: 12px;
         }
 
-        .fade-in {
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        .hidden { display: none !important; }
+        /* ========================================= */
 
         @media (max-width: 768px) {
-            header { padding: 0 20px; }
-            .grid-wrapper { padding: 0 10px; }
+            .hero-title { font-size: 5rem; }
+            .catalog-grid { grid-template-columns: 1fr; }
             .drawer { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="drawer-backdrop" id="backdrop"></div>
+    <div class="backdrop" id="backdrop"></div>
 
     <header>
         <div class="logo">RE—WEAR</div>
-        <div class="nav-right">
-            <div class="nav-link" id="btnSettings" data-key="settings">SETTINGS</div>
-            <div class="nav-link" id="btnCart">
-                <span data-key="cart">CART</span>
-                <span id="cartCount">(0)</span>
+        <div class="nav-group">
+            <div class="nav-link" id="settingsBtn">PREFERENCES</div>
+            <div class="nav-link" id="cartBtn">
+                BAG <span id="cartCount" style="color:#fff;">(0)</span>
             </div>
         </div>
     </header>
 
     <section class="hero">
-        <h1 data-key="heroTitle">ARCHIVE<br>SELECTION</h1>
-        <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="SEARCH...">
+        <h1 class="hero-title" id="hTitle">CURATED<br>ARCHIVE</h1>
+        <div class="hero-meta">
+            <div class="search-wrap">
+                <input type="text" class="search-input" id="searchInput" placeholder="SEARCH PIECES...">
+            </div>
+            <div style="font-size: 9px; color: #333;" id="itemCounter">000 ITEMS IN STOCK</div>
         </div>
     </section>
 
-    <main class="grid-wrapper">
+    <main class="catalog-container">
         <div class="catalog-grid" id="productGrid">
             </div>
     </main>
 
     <div class="drawer" id="cartDrawer">
-        <div class="drawer-header">
-            <div class="logo">BAG</div>
-            <div class="nav-link" onclick="window.ui.closeAll()">CLOSE</div>
-        </div>
-        <div class="drawer-content" id="cartContent">
+        <h2 style="font-weight: 900; font-size: 30px; margin-bottom: 40px;">BAG</h2>
+        <div id="cartBody" style="flex:1; overflow-y: auto;">
             </div>
-        <div style="padding: 30px; border-top: 1px solid var(--border);">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <span data-key="total">TOTAL</span>
-                <span id="cartTotal">$0.00</span>
+        <div style="border-top: 1px solid var(--border); padding-top: 30px;">
+            <div style="display:flex; justify-content: space-between; margin-bottom: 20px;">
+                <span id="totalLabel">SUBTOTAL</span>
+                <span id="totalPrice">$0.00</span>
             </div>
-            <button class="btn" style="width: 100%;" data-key="checkout">CHECKOUT</button>
+            <button class="btn-modern" style="width:100%;" id="checkoutBtn">CHECKOUT</button>
         </div>
     </div>
 
     <div class="drawer" id="settingsDrawer">
-        <div class="drawer-header">
-            <div class="logo" data-key="settings">SETTINGS</div>
-            <div class="nav-link" onclick="window.ui.closeAll()">CLOSE</div>
+        <h2 style="font-weight: 900; font-size: 30px; margin-bottom: 40px;">PREFERENCES</h2>
+        
+        <p style="font-size: 9px; color:#555; margin-bottom: 15px;">LOCALIZATION</p>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 50px;">
+            <div class="btn-secondary" onclick="app.setLang('en')">EN</div>
+            <div class="btn-secondary" onclick="app.setLang('ua')">UA</div>
+            <div class="btn-secondary" onclick="app.setLang('de')">DE</div>
         </div>
-        <div class="drawer-content">
+
+        <div id="adminAuth">
+            <p style="font-size: 9px; color:#555; margin-bottom: 15px;">SELLER ACCESS</p>
+            <input type="password" id="adminCode" class="admin-input" placeholder="PASSCODE">
+            <button class="btn-secondary" style="width:100%;" onclick="admin.login()">AUTHORIZE</button>
+        </div>
+
+        <div id="adminPanel" class="admin-dashboard">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <span style="font-weight:bold;">SELLER LOGGED</span>
+                <span class="nav-link" onclick="admin.logout()">EXIT</span>
+            </div>
             
-            <p style="margin-bottom: 15px; font-size: 10px; color: #555;" data-key="language">LANGUAGE</p>
-            <div class="lang-grid">
-                <div class="lang-btn active" id="lang-en" onclick="window.app.setLang('en')">EN</div>
-                <div class="lang-btn" id="lang-ua" onclick="window.app.setLang('ua')">UA</div>
-                <div class="lang-btn" id="lang-de" onclick="window.app.setLang('de')">DE</div>
+            <input type="file" id="itemImg" style="display:none;" onchange="admin.handleImg(this)">
+            <div class="upload-area" id="imgPrev" onclick="document.getElementById('itemImg').click()">
+                CLICK TO UPLOAD PRODUCT IMAGE
             </div>
 
-            <div class="admin-login-box">
-                <div id="adminAuth">
-                    <p style="margin-bottom: 15px; font-size: 10px; color: #555;" data-key="sellerMode">SELLER MODE</p>
-                    <input type="password" class="input-main" id="adminPass" placeholder="CODE">
-                    <button class="btn-outline" style="width: 100%;" onclick="window.admin.login()">LOGIN</button>
-                </div>
-
-                <div id="adminDashboard">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                        <span style="color: #fff; font-weight: bold;">DASHBOARD</span>
-                        <span class="nav-link" onclick="window.admin.logout()">LOGOUT</span>
-                    </div>
-
-                    <input type="file" id="itemFile" class="hidden" onchange="window.admin.handleImage(this)">
-                    <div class="upload-placeholder" id="uploadPrev" onclick="document.getElementById('itemFile').click()">
-                        CLICK TO UPLOAD IMAGE
-                    </div>
-
-                    <input type="text" id="itemName" class="input-main" placeholder="ITEM NAME">
-                    <input type="number" id="itemPrice" class="input-main" placeholder="PRICE">
-                    <button class="btn" style="width: 100%;" onclick="window.admin.add()">ADD TO CATALOG</button>
-                </div>
-            </div>
-
+            <input type="text" id="itemName" class="admin-input" placeholder="PRODUCT NAME">
+            <input type="number" id="itemPrice" class="admin-input" placeholder="PRICE">
+            <button class="btn-modern" style="width:100%;" onclick="admin.add()">PUBLISH TO ARCHIVE</button>
         </div>
     </div>
 
     <script>
-        /* --- 1. DATA & TRANSLATIONS --- */
-        const initialProducts = [
-            { id: 1, name: "PRADA SPORT NYLON VEST", price: 350, img: null },
-            { id: 2, name: "HELMUT LANG 1998 DENIM", price: 220, img: null },
-            { id: 3, name: "RICK OWENS RAMONES", price: 550, img: null },
-            { id: 4, name: "ARCHIVAL BOMBER JACKET", price: 400, img: null }
+        const initialDB = [
+            { id: 1, name: "HELMUT LANG 1999 PARKA", price: 850, img: null },
+            { id: 2, name: "YOHJI YAMAMOTO TROUSERS", price: 340, img: null },
+            { id: 3, name: "PRADA SPORT RED TAB VEST", price: 420, img: null },
+            { id: 4, name: "RICK OWENS RAMONES LOW", price: 600, img: null }
         ];
 
-        const translations = {
-            en: {
-                settings: "SETTINGS",
-                cart: "CART",
-                heroTitle: "ARCHIVE<br>SELECTION",
-                total: "TOTAL",
-                checkout: "CHECKOUT",
-                language: "LANGUAGE",
-                sellerMode: "SELLER MODE",
-                empty: "YOUR BAG IS EMPTY"
-            },
-            ua: {
-                settings: "НАЛАШТУВАННЯ",
-                cart: "КОШИК",
-                heroTitle: "АРХІВНА<br>КОЛЕКЦІЯ",
-                total: "РАЗОМ",
-                checkout: "ОФОРМИТИ",
-                language: "МОВА",
-                sellerMode: "РЕЖИМ ПРОДАВЦЯ",
-                empty: "КОШИК ПОРОЖНІЙ"
-            },
-            de: {
-                settings: "EINSTELLUNGEN",
-                cart: "WARENKORB",
-                heroTitle: "ARCHIV<br>AUSWAHL",
-                total: "GESAMT",
-                checkout: "KASSE",
-                language: "SPRACHE",
-                sellerMode: "VERKÄUFER MODUS",
-                empty: "WARENKORB IST LEER"
-            }
+        const i18n = {
+            en: { hero: "CURATED<br>ARCHIVE", settings: "PREFERENCES", bag: "BAG", total: "SUBTOTAL" },
+            ua: { hero: "ДОБІРНИЙ<br>АРХІВ", settings: "НАЛАШТУВАННЯ", bag: "КОШИК", total: "СУМА" },
+            de: { hero: "KURATIERTES<br>ARCHIV", settings: "OPTIONEN", bag: "TASCHE", total: "GESAMT" }
         };
 
-        /* --- 2. APP CLASS --- */
-        class App {
+        class REWEAR_APP {
             constructor() {
-                this.db = JSON.parse(localStorage.getItem('rewear_db')) || initialProducts;
+                this.db = JSON.parse(localStorage.getItem('rewear_v2_db')) || initialDB;
                 this.cart = [];
                 this.lang = 'en';
                 this.init();
             }
 
             init() {
-                this.renderGrid();
-                this.translate();
+                this.render();
+                this.bind();
             }
 
             save() {
-                localStorage.setItem('rewear_db', JSON.stringify(this.db));
+                localStorage.setItem('rewear_v2_db', JSON.stringify(this.db));
             }
 
-            renderGrid() {
+            render() {
                 const grid = document.getElementById('productGrid');
                 const search = document.getElementById('searchInput').value.toLowerCase();
                 grid.innerHTML = '';
 
                 const filtered = this.db.filter(p => p.name.toLowerCase().includes(search));
+                document.getElementById('itemCounter').innerText = `${filtered.length.toString().padStart(3, '0')} ITEMS IN STOCK`;
 
                 filtered.forEach(p => {
                     const card = document.createElement('div');
-                    card.className = 'product-card fade-in';
-                    
-                    const delBtn = window.admin && window.admin.isLogged 
-                        ? `<div class="admin-delete-btn" style="display:flex" onclick="window.admin.remove(${p.id})">&times;</div>` 
-                        : '';
-
-                    const imgStyle = p.img ? `background-image:url(${p.img}); background-size:cover;` : `background:#111;`;
+                    card.className = 'product-card';
+                    const del = window.admin && window.admin.active ? `<div class="del-badge" style="display:flex;" onclick="admin.remove(${p.id})">&times;</div>` : '';
+                    const img = p.img ? `url(${p.img})` : 'none';
 
                     card.innerHTML = `
-                        <div class="product-img-box" style="${imgStyle}" onclick="window.app.addToCart(${p.id})">
-                            ${p.img ? '' : '<span style="font-size:8px; color:#222; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%)">RE—WEAR</span>'}
-                            ${delBtn}
+                        <div class="img-container" onclick="app.addToCart(${p.id})">
+                            <div class="product-img" style="background-image:${img}; background-size:cover; background-position:center; height:100%;"></div>
+                            ${del}
                         </div>
-                        <div class="product-info">
-                            <span class="product-title">${p.name}</span>
+                        <div class="card-info">
+                            <span class="product-name">${p.name}</span>
                             <span class="product-price">$${p.price}</span>
                         </div>
                     `;
@@ -579,173 +475,126 @@
 
             addToCart(id) {
                 const item = this.db.find(p => p.id === id);
-                if (item) {
-                    this.cart.push(item);
-                    this.updateCartUI();
-                    window.ui.openDrawer('cartDrawer');
-                }
+                this.cart.push(item);
+                this.updateCart();
+                window.ui.open('cartDrawer');
             }
 
-            updateCartUI() {
+            updateCart() {
+                const body = document.getElementById('cartBody');
                 const count = document.getElementById('cartCount');
-                const content = document.getElementById('cartContent');
-                const total = document.getElementById('cartTotal');
-                
+                const total = document.getElementById('totalPrice');
                 count.innerText = `(${this.cart.length})`;
                 
-                if (this.cart.length === 0) {
-                    content.innerHTML = `<p style="color:#444; text-align:center; padding-top:50px;">${translations[this.lang].empty}</p>`;
-                    total.innerText = '$0.00';
-                    return;
-                }
-
-                content.innerHTML = '';
+                body.innerHTML = '';
                 let sum = 0;
-                this.cart.forEach((item, index) => {
+                this.cart.forEach((item, idx) => {
                     sum += Number(item.price);
-                    const div = document.createElement('div');
-                    div.className = 'cart-item fade-in';
-                    div.innerHTML = `
-                        <div class="cart-item-info">
-                            <div style="font-weight:bold;">${item.name}</div>
-                            <div style="color:#555; font-size:10px;">$${item.price}</div>
-                            <div class="nav-link" style="margin-top:10px; color:red;" onclick="window.app.removeFromCart(${index})">REMOVE</div>
+                    body.innerHTML += `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+                            <div>
+                                <div style="font-weight:bold; font-size:11px;">${item.name}</div>
+                                <div style="color:red; font-size:9px; cursor:pointer;" onclick="app.removeFromCart(${idx})">REMOVE</div>
+                            </div>
+                            <div style="font-family:monospace;">$${item.price}</div>
                         </div>
                     `;
-                    content.appendChild(div);
                 });
-                total.innerText = '$' + sum.toFixed(2);
+                total.innerText = `$${sum.toFixed(2)}`;
             }
 
-            removeFromCart(index) {
-                this.cart.splice(index, 1);
-                this.updateCartUI();
+            removeFromCart(idx) {
+                this.cart.splice(idx, 1);
+                this.updateCart();
             }
 
             setLang(l) {
                 this.lang = l;
-                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById('lang-' + l).classList.add('active');
-                this.translate();
-                this.renderGrid();
-                this.updateCartUI();
+                document.getElementById('hTitle').innerHTML = i18n[l].hero;
+                document.getElementById('settingsBtn').innerText = i18n[l].settings;
+                document.getElementById('totalLabel').innerText = i18n[l].total;
+                this.render();
             }
 
-            translate() {
-                const dict = translations[this.lang];
-                document.querySelectorAll('[data-key]').forEach(el => {
-                    const key = el.getAttribute('data-key');
-                    if (dict[key]) el.innerHTML = dict[key];
-                });
-                document.getElementById('searchInput').placeholder = this.lang === 'ua' ? 'ПОШУК...' : (this.lang === 'de' ? 'SUCHE...' : 'SEARCH...');
+            bind() {
+                document.getElementById('searchInput').oninput = () => this.render();
             }
         }
 
-        /* --- 3. UI CLASS --- */
-        class UI {
+        class REWEAR_UI {
             constructor() {
-                this.backdrop = document.getElementById('backdrop');
                 this.init();
             }
-
             init() {
-                document.getElementById('btnSettings').onclick = () => this.openDrawer('settingsDrawer');
-                document.getElementById('btnCart').onclick = () => this.openDrawer('cartDrawer');
-                this.backdrop.onclick = () => this.closeAll();
-                document.getElementById('searchInput').oninput = () => window.app.renderGrid();
+                document.getElementById('settingsBtn').onclick = () => this.open('settingsDrawer');
+                document.getElementById('cartBtn').onclick = () => this.open('cartDrawer');
+                document.getElementById('backdrop').onclick = () => this.close();
             }
-
-            openDrawer(id) {
+            open(id) {
                 document.getElementById(id).classList.add('open');
-                this.backdrop.classList.add('active');
+                document.getElementById('backdrop').classList.add('active');
             }
-
-            closeAll() {
+            close() {
                 document.querySelectorAll('.drawer').forEach(d => d.classList.remove('open'));
-                this.backdrop.classList.remove('active');
+                document.getElementById('backdrop').classList.remove('active');
             }
         }
 
-        /* --- 4. ADMIN CLASS --- */
-        class Admin {
+        class REWEAR_ADMIN {
             constructor() {
-                this.isLogged = false;
+                this.active = false;
                 this.pass = "admin2026";
-                this.tempImg = null;
+                this.bufferImg = null;
             }
-
             login() {
-                const val = document.getElementById('adminPass').value;
-                if (val === this.pass) {
-                    this.isLogged = true;
-                    document.getElementById('adminAuth').classList.add('hidden');
-                    document.getElementById('adminDashboard').style.display = 'block';
-                    window.app.renderGrid();
-                } else {
-                    alert('WRONG CODE');
-                }
+                if(document.getElementById('adminCode').value === this.pass) {
+                    this.active = true;
+                    document.getElementById('adminAuth').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    window.app.render();
+                } else { alert("ACCESS DENIED"); }
             }
-
             logout() {
-                this.isLogged = false;
-                document.getElementById('adminAuth').classList.remove('hidden');
-                document.getElementById('adminDashboard').style.display = 'none';
-                document.getElementById('adminPass').value = '';
-                window.app.renderGrid();
+                this.active = false;
+                document.getElementById('adminAuth').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
+                window.app.render();
             }
-
-            handleImage(input) {
-                const file = input.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.tempImg = e.target.result;
-                        const prev = document.getElementById('uploadPrev');
-                        prev.style.backgroundImage = `url(${e.target.result})`;
-                        prev.innerText = '';
-                    };
-                    reader.readAsDataURL(file);
-                }
+            handleImg(inp) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.bufferImg = e.target.result;
+                    document.getElementById('imgPrev').style.backgroundImage = `url(${e.target.result})`;
+                    document.getElementById('imgPrev').innerText = '';
+                };
+                reader.readAsDataURL(inp.files[0]);
             }
-
             add() {
                 const name = document.getElementById('itemName').value;
                 const price = document.getElementById('itemPrice').value;
-                if (!name || !price) return alert('FILL DATA');
-
-                const newItem = {
-                    id: Date.now(),
-                    name: name.toUpperCase(),
-                    price: price,
-                    img: this.tempImg
-                };
-
-                window.app.db.unshift(newItem);
+                if(!name || !price) return;
+                window.app.db.unshift({ id: Date.now(), name: name.toUpperCase(), price: price, img: this.bufferImg });
                 window.app.save();
-                window.app.renderGrid();
-                
-                // Clear
-                this.tempImg = null;
+                window.app.render();
+                // Reset
                 document.getElementById('itemName').value = '';
                 document.getElementById('itemPrice').value = '';
-                document.getElementById('uploadPrev').style.backgroundImage = 'none';
-                document.getElementById('uploadPrev').innerText = 'UPLOAD IMAGE';
+                document.getElementById('imgPrev').style.backgroundImage = 'none';
+                this.bufferImg = null;
             }
-
             remove(id) {
-                if(confirm('DELETE ITEM?')) {
+                if(confirm("DELETE PERMANENTLY?")) {
                     window.app.db = window.app.db.filter(p => p.id !== id);
                     window.app.save();
-                    window.app.renderGrid();
+                    window.app.render();
                 }
             }
         }
 
-        /* --- START --- */
         window.onload = () => {
-            window.app = new App();
-            window.ui = new UI();
-            window.admin = new Admin();
+            window.app = new REWEAR_APP();
+            window.ui = new REWEAR_UI();
+            window.admin = new REWEAR_ADMIN();
         };
     </script>
 </body>

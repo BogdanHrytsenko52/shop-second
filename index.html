@@ -3,84 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE—WEAR | Modern Second Hand</title>
+    <title>RE—WEAR | Archive</title>
     <style>
-        /* Матовий чорний фон з легким градієнтом для глибини */
+        /* Матовий фон та базові стилі */
         body {
             margin: 0;
-            padding: 0;
-            background-color: #0f0f0f; /* Глибокий матовий чорний */
+            background-color: #0d0d0d;
             color: #ffffff;
-            font-family: 'Inter', sans-serif; /* Потрібно підключити або використовувати системний */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             text-transform: uppercase;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Навігація зверху (як на референсах) */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        /* Верхня панель (Header) */
+        header {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            padding: 30px 40px;
+            align-items: start;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            font-size: 12px;
-            letter-spacing: 1px;
+        /* Назва зліва зверху */
+        .brand {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 2px;
         }
 
-        /* Головна назва */
-        .hero {
-            height: 80vh;
+        /* Опис сайту по центру */
+        .site-description {
+            font-size: 10px;
+            line-height: 1.6;
+            color: #666;
+            max-width: 300px;
+            text-align: left;
+        }
+
+        /* Кнопка та інфо справа */
+        .nav-right {
+            text-align: right;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding-left: 40px;
+            gap: 10px;
         }
 
-        h1 {
-            font-size: clamp(4rem, 15vw, 12rem); /* Динамічний розмір */
-            line-height: 0.9;
-            margin: 0;
-            font-weight: 800;
-            letter-spacing: -2px;
+        .menu-btn {
+            background: none;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 8px 15px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            align-self: flex-end;
         }
 
-        .sub-title {
-            font-size: 14px;
-            letter-spacing: 5px;
-            margin-top: 20px;
-            color: #888;
+        .menu-btn:hover {
+            background: #fff;
+            color: #000;
         }
 
-        /* Елемент декору (сітка або лінія) */
-        .divider {
+        /* Секція пошуку */
+        .search-container {
+            padding: 60px 40px;
+        }
+
+        .search-input {
             width: 100%;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.2);
-            margin-top: 50px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 2rem;
+            color: #fff;
+            padding: 10px 0;
+            outline: none;
+            text-transform: uppercase;
+            font-weight: 200;
+        }
+
+        .search-input::placeholder {
+            color: #222;
+        }
+
+        .search-input:focus {
+            border-bottom: 1px solid #fff;
+        }
+
+        .search-label {
+            font-size: 10px;
+            color: #444;
+            margin-bottom: 10px;
+            display: block;
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="nav-links">
-            <span>Shop</span>
-            <span>Collections</span>
-            <span>Archive</span>
+    <header>
+        <div class="brand">RE—WEAR</div>
+        
+        <div class="site-description">
+            Curated second-hand archive. <br>
+            Focusing on sustainable fashion and timeless silhouettes. <br>
+            Kyiv based studio.
         </div>
-        <div style="font-size: 12px;">Cart (0)</div>
-    </nav>
 
-    <div class="hero">
-        <p class="sub-title">Premium Second Hand Studio</p>
-        <h1>RE—WEAR</h1>
-        <div class="divider"></div>
-        <p style="font-size: 10px; color: #444; margin-top: 10px;">Est. 2026 / Kyiv, Ukraine</p>
-    </div>
+        <div class="nav-right">
+            <button class="menu-btn">Catalog</button>
+            <div style="font-size: 9px; color: #444;">Selection / 2026</div>
+        </div>
+    </header>
+
+    <main class="search-container">
+        <label class="search-label">Type to search the archive</label>
+        <input type="text" class="search-input" placeholder="Search items...">
+    </main>
 
 </body>
 </html>

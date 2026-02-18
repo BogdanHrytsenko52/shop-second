@@ -299,3 +299,196 @@
             },
             de: {
                 navSettings: "OPTIONEN", navCart: "TASCHE", hero: "KURATIERTES<br>ARCHIV",
+                cartTitle: "TASCHE", total: "GESAMT", checkout: "ZUR KASSE",
+                settingsTitle: "OPTIONEN", langLabel: "SPRACHE", sellerMode: "VERKÄUFER-LOGIN",
+                searchPlaceholder: "SUCHE...", empty: "TASCHE IST LEER"
+            }
+        };
+
+        /* CORE APP */
+        class REWEAR_CORE {
+            constructor() {
+                this.db = JSON.parse(localStorage.getItem('rewear_v3_db')) || initialProducts;
+                this.cart = [];
+                this.lang = 'en';
+                this.init();
+            }
+
+            init() {
+                this.renderGrid();
+                this.applyI18n();
+            }
+
+            save() { localStorage.setItem('rewear_v3_db', JSON.stringify(this.db)); }
+
+            renderGrid() {
+                const grid = document.getElementById('productGrid');
+                const search = document.getElementById('searchInput').value.toLowerCase();
+                grid.innerHTML = '';
+
+                const filtered = this.db.filter(p => p.name.toLowerCase().includes(search));
+                document.getElementById('itemsInfo').innerText = `${filtered.length.toString().padStart(3, '0')} PIECES RECORDED`;
+
+                filtered.forEach(p => {
+                    const el = document.createElement('div');
+                    el.className = 'card';
+                    const adminBtn = (window.admin && window.admin.active) ? `<div class="admin-del" style="display:flex;" onclick="admin.deleteItem(${p.id})">&times;</div>` : '';
+                    const imgStyle = p.img ? `background-image:url(${p.img}); background-size:cover;` : `background:#0a0a0a;`;
+
+                    el.innerHTML = `
+                        <div class="card-img-container" onclick="app.addToCart(${p.id})">
+                            <div class="card-img" style="${imgStyle} height:100%;"></div>
+                            ${adminBtn}
+                        </div>
+                        <div class="card-meta">
+                            <span class="card-name">${p.name}</span>
+                            <span class="card-price">$${p.price}</span>
+                        </div>
+                    `;
+                    grid.appendChild(el);
+                });
+            }
+
+            addToCart(id) {
+                const item = this.db.find(p => p.id === id);
+                this.cart.push(item);
+                this.updateCartUI();
+                window.ui.openDrawer('cartDrawer');
+            }
+
+            updateCartUI() {
+                const list = document.getElementById('cartItems');
+                const count = document.getElementById('cartCount');
+                const total = document.getElementById('totalPrice');
+                count.innerText = `(${this.cart.length})`;
+                
+                if (this.cart.length === 0) {
+                    list.innerHTML = `<p style="color:#333; text-align:center; padding-top:40px;">${translations[this.lang].empty}</p>`;
+                    total.innerText = '$0.00';
+                    return;
+                }
+
+                list.innerHTML = '';
+                let sum = 0;
+                this.cart.forEach((item, idx) => {
+                    sum += Number(item.price);
+                    list.innerHTML += `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:25px; border-bottom:1px solid var(--border); padding-bottom:15px;">
+                            <div>
+                                <div style="font-weight:900; font-size:11px;">${item.name}</div>
+                                <div style="color:red; font-size:9px; cursor:pointer; margin-top:5px;" onclick="app.removeFromCart(${idx})">REMOVE</div>
+                            </div>
+                            <div style="font-family:monospace;">$${item.price}</div>
+                        </div>
+                    `;
+                });
+                total.innerText = `$${sum.toFixed(2)}`;
+            }
+
+            removeFromCart(idx) {
+                this.cart.splice(idx, 1);
+                this.updateCartUI();
+            }
+
+            setLang(code) {
+                this.lang = code;
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('lang-'+code).classList.add('active');
+                this.applyI18n();
+                this.renderGrid();
+                this.updateCartUI();
+            }
+
+            applyI18n() {
+                const dict = translations[this.lang];
+                document.getElementById('heroText').innerHTML = dict.hero;
+                document.getElementById('searchInput').placeholder = dict.searchPlaceholder;
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (dict[key]) el.innerText = dict[key];
+                });
+            }
+        }
+
+        /* UI CONTROLLER */
+        class REWEAR_UI {
+            constructor() {
+                this.overlay = document.getElementById('overlay');
+                this.init();
+            }
+            init() {
+                document.getElementById('settingsBtn').onclick = () => this.openDrawer('settingsDrawer');
+                document.getElementById('cartBtn').onclick = () => this.openDrawer('cartDrawer');
+                this.overlay.onclick = () => this.closeAll();
+                document.getElementById('searchInput').oninput = () => window.app.renderGrid();
+            }
+            openDrawer(id) {
+                document.getElementById(id).classList.add('open');
+                this.overlay.classList.add('active');
+            }
+            closeAll() {
+                document.querySelectorAll('.drawer').forEach(d => d.classList.remove('open'));
+                this.overlay.classList.remove('active');
+            }
+        }
+
+        /* ADMIN */
+        class REWEAR_ADMIN {
+            constructor() {
+                this.active = false;
+                this.pass = "admin2026";
+                this.imgCache = null;
+            }
+            login() {
+                if(document.getElementById('adminPass').value === this.pass) {
+                    this.active = true;
+                    document.getElementById('authPanel').style.display = 'none';
+                    document.getElementById('dashboardPanel').style.display = 'block';
+                    window.app.renderGrid();
+                } else { alert("WRONG PASS"); }
+            }
+            logout() {
+                this.active = false;
+                document.getElementById('authPanel').style.display = 'block';
+                document.getElementById('dashboardPanel').style.display = 'none';
+                window.app.renderGrid();
+            }
+            handleImg(input) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.imgCache = e.target.result;
+                    document.getElementById('imgPreview').style.backgroundImage = `url(${e.target.result})`;
+                    document.getElementById('imgPreview').innerText = '';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+            addItem() {
+                const name = document.getElementById('addName').value;
+                const price = document.getElementById('addPrice').value;
+                if(!name || !price) return;
+                window.app.db.unshift({ id: Date.now(), name: name.toUpperCase(), price, img: this.imgCache });
+                window.app.save();
+                window.app.renderGrid();
+                document.getElementById('addName').value = '';
+                document.getElementById('addPrice').value = '';
+                document.getElementById('imgPreview').style.backgroundImage = 'none';
+                document.getElementById('imgPreview').innerText = 'UPLOAD IMAGE';
+                this.imgCache = null;
+            }
+            deleteItem(id) {
+                if(confirm("DELETE?")) {
+                    window.app.db = window.app.db.filter(p => p.id !== id);
+                    window.app.save();
+                    window.app.renderGrid();
+                }
+            }
+        }
+
+        window.onload = () => {
+            window.app = new REWEAR_CORE();
+            window.ui = new REWEAR_UI();
+            window.admin = new REWEAR_ADMIN();
+        };
+    </script>
+</body>
+</html>

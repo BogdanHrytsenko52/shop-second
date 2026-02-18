@@ -6,7 +6,44 @@ const initialData = [
     { id: 3, name: "RAF SIMONS BOMBER", price: 1800, desc: "Riot Riot Riot collection.", img: null }
 ];
 
-// Audio Setup
+// СЛОВНИК ПЕРЕКЛАДІВ
+const dict = {
+    en: {
+        hero: "MATTE<br>OBJECTS",
+        nav_sys: "SYSTEM",
+        nav_bag: "BAG",
+        bag_title: "YOUR BAG",
+        sys_title: "SYSTEM",
+        close: "CLOSE",
+        subtotal: "SUBTOTAL",
+        checkout: "PROCEED",
+        add_cart: "ADD TO CART"
+    },
+    ua: {
+        hero: "МАТОВИЙ<br>АРХІВ",
+        nav_sys: "СИСТЕМА",
+        nav_bag: "КОШИК",
+        bag_title: "ВАШ КОШИК",
+        sys_title: "НАЛАШТУВАННЯ",
+        close: "ЗАКРИТИ",
+        subtotal: "СУМА",
+        checkout: "ОФОРМИТИ",
+        add_cart: "У КОШИК"
+    },
+    de: {
+        hero: "MATTE<br>OBJEKTE",
+        nav_sys: "SYSTEM",
+        nav_bag: "TASCHE",
+        bag_title: "IHRE TASCHE",
+        sys_title: "EINSTELLUNGEN",
+        close: "SCHLIEßEN",
+        subtotal: "ZWISCHENSUMME",
+        checkout: "WEITER",
+        add_cart: "IN DEN WARENKORB"
+    }
+};
+
+// AUDIO
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playClick() {
     if(!settings.soundEnabled) return;
@@ -16,7 +53,7 @@ function playClick() {
         const gain = audioCtx.createGain();
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.frequency.value = 600; // Трохи нижчий тон для "дорогого" звуку
+        osc.frequency.value = 600;
         gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
         osc.start();
@@ -37,7 +74,7 @@ class Settings {
     setTheme(mode) {
         playClick();
         this.theme = mode;
-        document.body.className = ''; // Скидаємо старі класи
+        document.body.className = '';
         document.body.classList.add('theme-' + mode);
         
         document.getElementById('themeMatte').className = mode === 'matte' ? 'setting-card active' : 'setting-card';
@@ -79,6 +116,7 @@ class App {
         this.products = JSON.parse(localStorage.getItem(DB_KEY)) || initialData;
         this.cart = [];
         this.currId = null;
+        this.lang = 'en';
         this.renderGrid();
     }
 
@@ -177,6 +215,23 @@ class App {
     }
 
     remCart(idx) { playClick(); this.cart.splice(idx, 1); this.updateCart(); }
+
+    setLang(l) {
+        playClick();
+        this.lang = l;
+        
+        // Оновлюємо кнопки
+        ['en','ua','de'].forEach(k => {
+            document.getElementById('lang-'+k).className = k === l ? 'btn-outline active' : 'btn-outline';
+        });
+
+        // Оновлюємо тексти на сторінці
+        const t = dict[l];
+        document.querySelectorAll('[data-t]').forEach(el => {
+            const key = el.getAttribute('data-t');
+            if(t[key]) el.innerHTML = t[key];
+        });
+    }
 }
 
 class UI {

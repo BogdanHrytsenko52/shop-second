@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE—WEAR | System V8</title>
+    <title>RE—WEAR | System V8.1</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,9 @@
 
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-matte"> <div class="backdrop" id="backdrop"></div>
+<body class="theme-matte">
+
+    <div class="backdrop" id="backdrop"></div>
     
     <div class="modal-overlay" id="productModal">
         <div class="modal-content">
@@ -29,7 +31,7 @@
                     <div class="modal-price" id="mPrice">$000</div>
                     <div class="divider"></div>
                     <p class="modal-desc" id="mDesc">Loading...</p>
-                    <button class="btn" style="width:100%; margin-top:auto;" onclick="app.addToCartFromModal()">ADD TO CART</button>
+                    <button class="btn" style="width:100%; margin-top:auto;" id="btnAddCart" onclick="app.addToCartFromModal()" data-t="add_cart">ADD TO CART</button>
                 </div>
 
                 <div id="mEditMode" style="display:none;">
@@ -49,15 +51,15 @@
     <header>
         <div class="logo" onclick="location.reload()">RE—WEAR</div>
         <div style="display: flex; gap: 30px;">
-            <div class="nav-link" id="btnSettings" onclick="ui.openDrawer('settingsDrawer')">SYSTEM</div>
+            <div class="nav-link" id="btnSettings" onclick="ui.openDrawer('settingsDrawer')" data-t="nav_sys">SYSTEM</div>
             <div class="nav-link" id="btnCart" onclick="ui.openDrawer('cartDrawer')">
-                BAG <span id="cartCount" style="opacity:0.5;">(0)</span>
+                <span data-t="nav_bag">BAG</span> <span id="cartCount" style="opacity:0.5;">(0)</span>
             </div>
         </div>
     </header>
 
     <div class="container">
-        <div class="hero-text" id="heroText">MATTE<br>OBJECTS</div>
+        <div class="hero-text" id="heroText" data-t="hero">MATTE<br>OBJECTS</div>
         
         <div class="controls-bar">
             <input type="text" class="input-std" id="search" placeholder="SEARCH DATABASE...">
@@ -69,23 +71,23 @@
 
     <div class="drawer" id="cartDrawer">
         <div class="drawer-header">
-            <div class="drawer-title">YOUR BAG</div>
-            <div class="nav-link" onclick="ui.closeDrawers()">CLOSE</div>
+            <div class="drawer-title" data-t="bag_title">YOUR BAG</div>
+            <div class="nav-link" onclick="ui.closeDrawers()" data-t="close">CLOSE</div>
         </div>
         <div id="cartList" style="flex:1; overflow-y: auto;"></div>
         <div class="drawer-footer">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <span>SUBTOTAL</span>
+                <span data-t="subtotal">SUBTOTAL</span>
                 <span id="cartTotal" style="font-family:monospace; font-size:16px;">0</span>
             </div>
-            <button class="btn" style="width:100%;">PROCEED</button>
+            <button class="btn" style="width:100%;" data-t="checkout">PROCEED</button>
         </div>
     </div>
 
     <div class="drawer" id="settingsDrawer">
         <div class="drawer-header">
-            <div class="drawer-title">SYSTEM</div>
-            <div class="nav-link" onclick="ui.closeDrawers()">CLOSE</div>
+            <div class="drawer-title" data-t="sys_title">SYSTEM</div>
+            <div class="nav-link" onclick="ui.closeDrawers()" data-t="close">CLOSE</div>
         </div>
 
         <div class="section-title">VISUAL MODE</div>
@@ -100,13 +102,11 @@
             </div>
         </div>
 
-        <div class="settings-grid">
-            <div class="setting-card active" id="soundOn" onclick="settings.setSound(true)">
-                <div class="setting-val">SOUND ON</div>
-            </div>
-            <div class="setting-card" id="soundOff" onclick="settings.setSound(false)">
-                <div class="setting-val">SILENT</div>
-            </div>
+        <div class="section-title">LOCALIZATION</div>
+        <div style="display:flex; gap:10px; margin-bottom:30px;">
+            <button class="btn-outline active" id="lang-en" onclick="app.setLang('en')" style="flex:1;">EN</button>
+            <button class="btn-outline" id="lang-ua" onclick="app.setLang('ua')" style="flex:1;">UA</button>
+            <button class="btn-outline" id="lang-de" onclick="app.setLang('de')" style="flex:1;">DE</button>
         </div>
 
         <div class="section-title">CURRENCY</div>

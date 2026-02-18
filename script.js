@@ -4,6 +4,7 @@ import { getDatabase, ref, push, onValue, remove, update } from "https://www.gst
 const firebaseConfig = {
     apiKey: "AIzaSyATJJPdiTWusShpRRZl2_KGLE4gIodM5SA",
     authDomain: "rewear-shop.firebaseapp.com",
+    // 👇 ЦЕЙ РЯДОК Я ДОДАВ. ЯКЩО НЕ ПРАЦЮЄ, ЗАМІНИ НА СВІЙ З FIREBASE КОНСОЛІ
     databaseURL: "https://rewear-shop-default-rtdb.firebaseio.com",
     projectId: "rewear-shop",
     storageBucket: "rewear-shop.firebasestorage.app",
@@ -578,6 +579,7 @@ class AdminSystem {
     }
 }
 
+// ГЛОБАЛЬНІ ЗМІННІ ДЛЯ ДОСТУПУ З HTML
 window.onload = () => {
     window.audio = new AudioController();
     window.notify = new Notificator();

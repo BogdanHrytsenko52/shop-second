@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE—WEAR | System V8.1</title>
+    <title>RE—WEAR | System V9</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -24,14 +24,14 @@
                 <button id="mImgEditBtn" class="btn" style="position:absolute; bottom:20px; left:50%; transform:translateX(-50%); display:none; z-index:10;" onclick="document.getElementById('mFile').click()">CHANGE PHOTO</button>
             </div>
             <div class="modal-info-col">
-                <div style="font-size:10px; opacity:0.5; margin-bottom:20px; letter-spacing: 2px;">ARCHIVE / ID: <span id="mId">00</span></div>
+                <div style="font-size:10px; opacity:0.5; margin-bottom:20px; letter-spacing: 2px;">ID: <span id="mId">00</span></div>
                 
                 <div id="mViewMode">
                     <div class="modal-title" id="mTitle">PRODUCT</div>
                     <div class="modal-price" id="mPrice">$000</div>
                     <div class="divider"></div>
                     <p class="modal-desc" id="mDesc">Loading...</p>
-                    <button class="btn" style="width:100%; margin-top:auto;" id="btnAddCart" onclick="app.addToCartFromModal()" data-t="add_cart">ADD TO CART</button>
+                    <button class="btn" style="width:100%; margin-top:auto;" onclick="app.addToCartFromModal()" data-t="add_cart">ADD TO CART</button>
                 </div>
 
                 <div id="mEditMode" style="display:none;">
@@ -63,7 +63,7 @@
         
         <div class="controls-bar">
             <input type="text" class="input-std" id="search" placeholder="SEARCH DATABASE...">
-            <div style="font-size: 10px; opacity:0.5;" id="itemCounter">LOADING DATA...</div>
+            <div style="font-size: 10px; opacity:0.5;" id="itemCounter">LOADING...</div>
         </div>
 
         <div class="grid" id="grid"></div>
@@ -90,26 +90,34 @@
             <div class="nav-link" onclick="ui.closeDrawers()" data-t="close">CLOSE</div>
         </div>
 
-        <div class="section-title">VISUAL MODE</div>
+        <div class="section-title" data-t="s_visual">VISUAL MODE</div>
         <div class="settings-grid">
             <div class="setting-card active" id="themeMatte" onclick="settings.setTheme('matte')">
-                <div class="setting-val">MATTE BLACK</div>
-                <div class="setting-label">FLAT / DEEP</div>
+                <div class="setting-val" data-t="t_matte">MATTE BLACK</div>
             </div>
             <div class="setting-card" id="themeModern" onclick="settings.setTheme('modern')">
-                <div class="setting-val">MODERN GREY</div>
-                <div class="setting-label">TECH / CONTRAST</div>
+                <div class="setting-val" data-t="t_modern">MODERN GREY</div>
             </div>
         </div>
 
-        <div class="section-title">LOCALIZATION</div>
+        <div class="section-title" data-t="s_audio">AUDIO UI</div>
+        <div class="settings-grid">
+            <div class="setting-card active" id="soundOn" onclick="settings.setSound(true)">
+                <div class="setting-val">ON</div>
+            </div>
+            <div class="setting-card" id="soundOff" onclick="settings.setSound(false)">
+                <div class="setting-val">OFF</div>
+            </div>
+        </div>
+
+        <div class="section-title" data-t="s_lang">LOCALIZATION</div>
         <div style="display:flex; gap:10px; margin-bottom:30px;">
             <button class="btn-outline active" id="lang-en" onclick="app.setLang('en')" style="flex:1;">EN</button>
             <button class="btn-outline" id="lang-ua" onclick="app.setLang('ua')" style="flex:1;">UA</button>
             <button class="btn-outline" id="lang-de" onclick="app.setLang('de')" style="flex:1;">DE</button>
         </div>
 
-        <div class="section-title">CURRENCY</div>
+        <div class="section-title" data-t="s_curr">CURRENCY</div>
         <div class="settings-grid" style="grid-template-columns: 1fr 1fr 1fr;">
             <div class="setting-card active" id="currUSD" onclick="settings.setCurrency('USD')">
                 <div class="setting-val">USD $</div>
@@ -122,10 +130,10 @@
             </div>
         </div>
 
-        <div class="section-title">ADMIN ACCESS</div>
+        <div class="section-title" data-t="s_admin">ADMIN ACCESS</div>
         <div id="loginForm">
             <input type="password" id="adminPassInput" class="input-std" placeholder="ENTER PASSCODE">
-            <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="sysAdmin.login()">UNLOCK</button>
+            <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="sysAdmin.login()" data-t="btn_login">UNLOCK</button>
         </div>
         
         <div id="adminPanel" style="display:none;">

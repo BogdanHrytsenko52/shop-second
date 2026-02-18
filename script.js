@@ -1,4 +1,4 @@
-const DB_KEY = 'rewear_v8_db';
+const DB_KEY = 'rewear_v9_db';
 
 const initialData = [
     { id: 1, name: "HELMUT LANG 1999 COAT", price: 850, desc: "Classic archival bondage parka.", img: null },
@@ -6,44 +6,35 @@ const initialData = [
     { id: 3, name: "RAF SIMONS BOMBER", price: 1800, desc: "Riot Riot Riot collection.", img: null }
 ];
 
-// СЛОВНИК ПЕРЕКЛАДІВ
+// СЛОВНИК (ПОВНИЙ ПЕРЕКЛАД ВСІХ КНОПОК)
 const dict = {
     en: {
         hero: "MATTE<br>OBJECTS",
-        nav_sys: "SYSTEM",
-        nav_bag: "BAG",
-        bag_title: "YOUR BAG",
-        sys_title: "SYSTEM",
-        close: "CLOSE",
-        subtotal: "SUBTOTAL",
-        checkout: "PROCEED",
-        add_cart: "ADD TO CART"
+        nav_sys: "SYSTEM", nav_bag: "BAG",
+        bag_title: "YOUR BAG", sys_title: "SYSTEM",
+        close: "CLOSE", subtotal: "SUBTOTAL", checkout: "PROCEED", add_cart: "ADD TO CART",
+        s_visual: "VISUAL MODE", s_audio: "AUDIO UI", s_lang: "LOCALIZATION", s_curr: "CURRENCY", s_admin: "ADMIN ACCESS",
+        t_matte: "MATTE BLACK", t_modern: "MODERN GREY", btn_login: "UNLOCK"
     },
     ua: {
         hero: "МАТОВИЙ<br>АРХІВ",
-        nav_sys: "СИСТЕМА",
-        nav_bag: "КОШИК",
-        bag_title: "ВАШ КОШИК",
-        sys_title: "НАЛАШТУВАННЯ",
-        close: "ЗАКРИТИ",
-        subtotal: "СУМА",
-        checkout: "ОФОРМИТИ",
-        add_cart: "У КОШИК"
+        nav_sys: "НАЛАШТУВАННЯ", nav_bag: "КОШИК",
+        bag_title: "ВАШ КОШИК", sys_title: "СИСТЕМА",
+        close: "ЗАКРИТИ", subtotal: "СУМА", checkout: "ОФОРМИТИ", add_cart: "У КОШИК",
+        s_visual: "ТЕМА ДИЗАЙНУ", s_audio: "ЗВУКИ", s_lang: "МОВА", s_curr: "ВАЛЮТА", s_admin: "ВХІД ПРОДАВЦЯ",
+        t_matte: "ГЛИБОКИЙ ЧОРНИЙ", t_modern: "ТЕХНО СІРИЙ", btn_login: "УВІЙТИ"
     },
     de: {
         hero: "MATTE<br>OBJEKTE",
-        nav_sys: "SYSTEM",
-        nav_bag: "TASCHE",
-        bag_title: "IHRE TASCHE",
-        sys_title: "EINSTELLUNGEN",
-        close: "SCHLIEßEN",
-        subtotal: "ZWISCHENSUMME",
-        checkout: "WEITER",
-        add_cart: "IN DEN WARENKORB"
+        nav_sys: "EINSTELLUNGEN", nav_bag: "TASCHE",
+        bag_title: "IHRE TASCHE", sys_title: "SYSTEM",
+        close: "SCHLIEßEN", subtotal: "ZWISCHENSUMME", checkout: "WEITER", add_cart: "IN DEN WARENKORB",
+        s_visual: "VISUELLER MODUS", s_audio: "AUDIO", s_lang: "SPRACHE", s_curr: "WÄHRUNG", s_admin: "VERKÄUFERZUGANG",
+        t_matte: "MATTSCHWARZ", t_modern: "MODERN GRAU", btn_login: "ENTSPERREN"
     }
 };
 
-// AUDIO
+// AUDIO ENGINE
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playClick() {
     if(!settings.soundEnabled) return;
@@ -76,14 +67,13 @@ class Settings {
         this.theme = mode;
         document.body.className = '';
         document.body.classList.add('theme-' + mode);
-        
         document.getElementById('themeMatte').className = mode === 'matte' ? 'setting-card active' : 'setting-card';
         document.getElementById('themeModern').className = mode === 'modern' ? 'setting-card active' : 'setting-card';
     }
 
     setSound(bool) {
         this.soundEnabled = bool;
-        if(bool) playClick();
+        if(bool) playClick(); // Sound feedback only when turning ON
         document.getElementById('soundOn').className = bool ? 'setting-card active' : 'setting-card';
         document.getElementById('soundOff').className = !bool ? 'setting-card active' : 'setting-card';
     }
@@ -104,7 +94,7 @@ class Settings {
     }
 
     reset() {
-        if(confirm('FACTORY RESET: All data will be wiped.')) {
+        if(confirm('RESET SYSTEM DATA?')) {
             localStorage.removeItem(DB_KEY);
             location.reload();
         }
@@ -220,12 +210,12 @@ class App {
         playClick();
         this.lang = l;
         
-        // Оновлюємо кнопки
+        // Buttons Update
         ['en','ua','de'].forEach(k => {
             document.getElementById('lang-'+k).className = k === l ? 'btn-outline active' : 'btn-outline';
         });
 
-        // Оновлюємо тексти на сторінці
+        // Translate Interface
         const t = dict[l];
         document.querySelectorAll('[data-t]').forEach(el => {
             const key = el.getAttribute('data-t');

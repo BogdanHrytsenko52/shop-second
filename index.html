@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RE-WEAR | Твій улюблений секонд</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="text-2xl font-bold tracking-tighter text-indigo-600">RE-WEAR</div>
+                <div class="hidden md:flex space-x-8 font-medium">
+                    <a href="#" class="hover:text-indigo-600 transition">Каталог</a>
+                    <a href="#" class="hover:text-indigo-600 transition">Про нас</a>
+                    <a href="#" class="hover:text-indigo-600 transition">Доставка</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="https://t.me/your_username" class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm hover:bg-indigo-700 transition">
+                        <i class="fab fa-telegram mr-2"></i>Написати нам
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative py-16 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900 mb-4">
+                    Одяг з історією <br><span class="text-indigo-600 text-3xl md:text-5xl">для твого стилю</span>
+                </h1>
+                <p class="text-lg text-gray-500 max-w-2xl mx-auto">
+                    Ми відбираємо тільки найкращий вінтаж та брендові речі. Екологічно. Стильно. Доступно.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-bold">Останні надходження (Drop)</h2>
+            <span class="text-sm text-gray-500 underline cursor-pointer">Фільтрувати за розміром</span>
+        </div>
+
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
+                <div class="aspect-square bg-gray-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1000&auto=format&fit=crop" 
+                         alt="Футболка" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg uppercase tracking-wide">Vintage Nike Tee</h3>
+                    <p class="text-indigo-600 font-bold mt-1">450 грн</p>
+                    <p class="text-sm text-gray-400 mt-1">Розмір: L | Стан: 9/10</p>
+                    <button onclick="orderItem('Vintage Nike Tee')" class="mt-4 w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-indigo-600 transition">
+                        Замовити
+                    </button>
+                </div>
+            </div>
+
+            </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-12 mt-12 text-center text-gray-500">
+        <p>© 2026 RE-WEAR Store. Зроблено з любов'ю до планети.</p>
+    </footer>
+
+    <script>
+        function orderItem(name) {
+            const message = `Привіт! Хочу купити: ${name}`;
+            window.open(`https://t.me/your_username?text=${encodeURIComponent(message)}`, '_blank');
+            const products = [
+    { name: "Carhartt Jacket", price: 1200, size: "M", img: "url..." },
+    { name: "Levi's 501", price: 800, size: "32/34", img: "url..." }
+    ];
+        }
+    </script>
+</body>
+</html>

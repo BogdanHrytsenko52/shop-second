@@ -3,337 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE—WEAR / Авангардний Архів</title>
+    <title>RE—WEAR / Ultra Archive</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
         /* =========================================
-           1. ДИЗАЙН-СИСТЕМА ТА ЗМІННІ
-           =========================================
-        */
+           1. CORE & AESTHETICS (ШУМ ТА СТИЛЬ)
+           ========================================= */
         :root {
             --bg: #000000;
-            --surface: #0a0a0a;
             --accent: #ffffff;
-            --text-main: #ffffff;
-            --text-dim: #555555;
-            --border: rgba(255, 255, 255, 0.05);
-            --glass: rgba(255, 255, 255, 0.02);
-            --error: #ff3b30;
-            --header-h: 70px;
+            --text-dim: #666;
+            --border: rgba(255, 255, 255, 0.07);
+            --header-h: 75px;
             --font-main: 'Inter', sans-serif;
-            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* =========================================
-           2. ГЛОБАЛЬНЕ СКИНУТТЯ ТА БАЗА
-           =========================================
-        */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background-color: var(--bg);
-            color: var(--text-main);
+            color: var(--accent);
             font-family: var(--font-main);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            line-height: 1.4;
+            letter-spacing: 0.1em;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Кастомний скролбар (тонкий та мінімалістичний) */
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: #222; }
-        ::-webkit-scrollbar-thumb:hover { background: #444; }
-
-        /* =========================================
-           3. КОМПОНЕНТИ ТА КНОПКИ
-           =========================================
-        */
-        .btn-modern {
-            position: relative;
-            padding: 14px 28px;
-            background: var(--accent);
-            color: var(--bg);
-            border: 1px solid var(--accent);
-            font-weight: 700;
-            font-size: 10px;
-            cursor: pointer;
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .btn-modern:hover {
-            background: transparent;
-            color: var(--accent);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-dim);
-            border: 1px solid var(--border);
-            padding: 10px 20px;
-            font-size: 9px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+        /* Ефект старого кіно / Шуму */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 9999;
         }
 
         /* =========================================
-           4. НАВІГАЦІЯ (GLASSMORPHISM)
-           =========================================
-        */
+           2. NAVIGATION (MINIMALIST)
+           ========================================= */
         header {
             position: fixed;
-            top: 0;
-            width: 100%;
-            height: var(--header-h);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 4vw;
-            z-index: 1000;
-            background: rgba(0,0,0,0.5);
+            top: 0; width: 100%; height: var(--header-h);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 4vw; z-index: 1000;
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
 
-        .logo {
-            font-weight: 900;
-            font-size: 18px;
-            letter-spacing: 4px;
-            mix-blend-mode: difference;
-        }
+        .logo { font-weight: 900; font-size: 20px; letter-spacing: 5px; cursor: pointer; }
 
-        .nav-group {
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
+        .nav-actions { display: flex; gap: 40px; }
 
         .nav-link {
-            font-size: 10px;
-            font-weight: 400;
-            cursor: pointer;
-            color: var(--text-dim);
-            transition: var(--transition);
+            font-size: 10px; font-weight: 400; cursor: pointer;
+            transition: var(--transition); color: var(--text-dim);
         }
 
-        .nav-link:hover {
-            color: var(--accent);
-            letter-spacing: 0.15em;
-        }
+        .nav-link:hover { color: var(--accent); letter-spacing: 0.2em; }
 
         /* =========================================
-           5. HERO & ТИПОГРАФІКА
-           =========================================
-        */
+           3. HERO & SEARCH (DRAMATIC)
+           ========================================= */
         .hero {
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 4vw;
+            height: 95vh; display: flex; flex-direction: column;
+            justify-content: center; padding: 0 4vw;
             border-bottom: 1px solid var(--border);
+            position: relative;
         }
 
         .hero-title {
-            font-size: clamp(3rem, 12vw, 15rem);
-            font-weight: 900;
-            line-height: 0.8;
-            letter-spacing: -0.05em;
-            margin-bottom: 20px;
+            font-size: clamp(3rem, 14vw, 18rem);
+            font-weight: 900; line-height: 0.75; letter-spacing: -0.06em;
         }
 
-        .hero-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: 40px;
+        .hero-controls {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-top: 50px;
         }
 
-        .search-wrap {
-            width: 100%;
-            max-width: 400px;
-        }
+        .search-box { width: 100%; max-width: 450px; position: relative; }
 
         .search-input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            color: var(--accent);
-            padding: 10px 0;
-            font-size: 14px;
-            font-weight: 200;
+            width: 100%; background: transparent; border: none;
+            border-bottom: 1px solid var(--border); color: #fff;
+            padding: 12px 0; font-size: 16px; font-weight: 200;
             transition: var(--transition);
         }
 
-        .search-input:focus {
-            border-bottom-color: var(--accent);
-        }
+        .search-input:focus { border-bottom-color: #fff; }
 
         /* =========================================
-           6. КАТАЛОГ (GRID SYSTEM)
-           =========================================
-        */
-        .catalog-container {
-            padding: 100px 4vw;
-        }
+           4. CATALOG GRID (HIGH-END)
+           ========================================= */
+        .catalog { padding: 120px 4vw; }
 
         .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 60px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 80px 40px;
         }
 
-        .product-card {
-            position: relative;
-            background: var(--surface);
+        .card { position: relative; cursor: pointer; transition: var(--transition); }
+
+        .card-img-container {
+            width: 100%; aspect-ratio: 3/4; background: #0a0a0a;
+            overflow: hidden; position: relative;
+        }
+
+        .card-img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(1) brightness(0.7);
             transition: var(--transition);
         }
 
-        .img-container {
-            width: 100%;
-            aspect-ratio: 4/5;
-            background: #111;
-            overflow: hidden;
-            position: relative;
-        }
+        .card:hover .card-img { filter: grayscale(0) brightness(1); transform: scale(1.03); }
 
-        .product-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: saturate(0.2);
-            transition: var(--transition);
-        }
-
-        .product-card:hover .product-img {
-            filter: saturate(1);
-            transform: scale(1.05);
-        }
-
-        .card-info {
-            padding: 25px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        /* Текст на картках */
+        .card-meta {
+            padding: 20px 0; display: flex; justify-content: space-between;
             border-bottom: 1px solid var(--border);
         }
 
-        .product-name {
-            font-size: 12px;
-            font-weight: 700;
-        }
+        .card-name { font-size: 11px; font-weight: 700; }
+        .card-price { font-family: monospace; color: var(--text-dim); }
 
-        .product-price {
-            font-family: monospace;
-            color: var(--text-dim);
-        }
-
-        /* Admin Controls */
-        .del-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: var(--bg);
-            border: 1px solid var(--error);
-            color: var(--error);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            font-size: 20px;
+        /* Кнопка видалення для адміна */
+        .admin-del {
+            position: absolute; top: 20px; right: 20px;
+            width: 35px; height: 35px; background: #000;
+            border: 1px solid red; color: red;
+            display: none; align-items: center; justify-content: center;
+            z-index: 10; font-size: 18px;
         }
 
         /* =========================================
-           7. DRAWERS (BEYOND THE SURFACE)
-           =========================================
-        */
+           5. DRAWERS (SIDE PANELS)
+           ========================================= */
         .drawer {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 450px;
-            max-width: 100%;
-            height: 100%;
-            background: var(--bg);
-            z-index: 2000;
-            transition: var(--transition);
+            position: fixed; top: 0; right: -100%;
+            width: 480px; max-width: 100%; height: 100%;
+            background: #000; z-index: 2000; padding: 80px 50px;
             border-left: 1px solid var(--border);
-            padding: 60px 40px;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
+            transition: var(--transition);
         }
 
         .drawer.open { right: 0; }
 
-        .backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            opacity: 0;
-            visibility: hidden;
-            z-index: 1900;
-            transition: 0.4s;
+        .drawer-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+            opacity: 0; visibility: hidden; z-index: 1900; transition: 0.5s;
         }
 
-        .backdrop.active { opacity: 1; visibility: visible; }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+
+        .drawer-title { font-size: 40px; font-weight: 900; margin-bottom: 50px; }
 
         /* =========================================
-           8. ADMIN & LOGIC ELEMENTS
-           =========================================
-        */
-        .admin-dashboard { display: none; margin-top: 30px; }
-        .upload-area {
-            width: 100%;
-            height: 200px;
-            border: 1px dashed var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            cursor: pointer;
-            background-size: cover;
-            background-position: center;
-            font-size: 10px;
-            color: var(--text-dim);
+           6. АДМІНКА ТА ІНШЕ
+           ========================================= */
+        .admin-box { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 30px; }
+        
+        .form-input {
+            width: 100%; background: #0a0a0a; border: 1px solid var(--border);
+            color: #fff; padding: 18px; margin-bottom: 15px; font-size: 12px;
         }
 
-        .admin-input {
-            width: 100%;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 15px;
-            margin-bottom: 10px;
-            font-size: 12px;
+        .btn-main {
+            width: 100%; padding: 18px; background: #fff; color: #000;
+            border: none; font-weight: 900; cursor: pointer; transition: 0.3s;
         }
 
-        /* ========================================= */
+        .btn-main:hover { opacity: 0.8; }
+
+        /* Мовні кнопки */
+        .lang-switch { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 40px; }
+        .lang-btn {
+            border: 1px solid var(--border); padding: 12px; text-align: center;
+            font-size: 10px; cursor: pointer; transition: 0.3s;
+        }
+        .lang-btn.active { background: #fff; color: #000; border-color: #fff; }
 
         @media (max-width: 768px) {
-            .hero-title { font-size: 5rem; }
+            .hero-title { font-size: 4.5rem; }
             .catalog-grid { grid-template-columns: 1fr; }
             .drawer { width: 100%; }
         }
@@ -341,261 +200,102 @@
 </head>
 <body>
 
-    <div class="backdrop" id="backdrop"></div>
+    <div class="drawer-overlay" id="overlay"></div>
 
     <header>
-        <div class="logo">RE—WEAR</div>
-        <div class="nav-group">
-            <div class="nav-link" id="settingsBtn">PREFERENCES</div>
+        <div class="logo" onclick="location.reload()">RE—WEAR</div>
+        <div class="nav-actions">
+            <div class="nav-link" id="settingsBtn" data-i18n="navSettings">SETTINGS</div>
             <div class="nav-link" id="cartBtn">
-                BAG <span id="cartCount" style="color:#fff;">(0)</span>
+                <span data-i18n="navCart">CART</span> <span id="cartCount" style="color:#fff;">(0)</span>
             </div>
         </div>
     </header>
 
     <section class="hero">
-        <h1 class="hero-title" id="hTitle">CURATED<br>ARCHIVE</h1>
-        <div class="hero-meta">
-            <div class="search-wrap">
+        <h1 class="hero-title" id="heroText">CURATED<br>ARCHIVE</h1>
+        <div class="hero-controls">
+            <div class="search-box">
                 <input type="text" class="search-input" id="searchInput" placeholder="SEARCH PIECES...">
             </div>
-            <div style="font-size: 9px; color: #333;" id="itemCounter">000 ITEMS IN STOCK</div>
+            <div style="font-size: 9px; color: #444;" id="itemsInfo">000 PIECES RECORDED</div>
         </div>
     </section>
 
-    <main class="catalog-container">
+    <main class="catalog">
         <div class="catalog-grid" id="productGrid">
             </div>
     </main>
 
     <div class="drawer" id="cartDrawer">
-        <h2 style="font-weight: 900; font-size: 30px; margin-bottom: 40px;">BAG</h2>
-        <div id="cartBody" style="flex:1; overflow-y: auto;">
+        <h2 class="drawer-title" data-i18n="cartTitle">CART</h2>
+        <div id="cartItems" style="flex:1; overflow-y: auto; margin-bottom: 30px;">
             </div>
         <div style="border-top: 1px solid var(--border); padding-top: 30px;">
-            <div style="display:flex; justify-content: space-between; margin-bottom: 20px;">
-                <span id="totalLabel">SUBTOTAL</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 25px;">
+                <span data-i18n="total">TOTAL</span>
                 <span id="totalPrice">$0.00</span>
             </div>
-            <button class="btn-modern" style="width:100%;" id="checkoutBtn">CHECKOUT</button>
+            <button class="btn-main" id="checkoutBtn" data-i18n="checkout">PROCEED TO CHECKOUT</button>
         </div>
     </div>
 
     <div class="drawer" id="settingsDrawer">
-        <h2 style="font-weight: 900; font-size: 30px; margin-bottom: 40px;">PREFERENCES</h2>
+        <h2 class="drawer-title" data-i18n="settingsTitle">PREFERENCES</h2>
         
-        <p style="font-size: 9px; color:#555; margin-bottom: 15px;">LOCALIZATION</p>
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 50px;">
-            <div class="btn-secondary" onclick="app.setLang('en')">EN</div>
-            <div class="btn-secondary" onclick="app.setLang('ua')">UA</div>
-            <div class="btn-secondary" onclick="app.setLang('de')">DE</div>
+        <p style="font-size: 9px; color:#555; margin-bottom: 15px;" data-i18n="langLabel">LANGUAGE</p>
+        <div class="lang-switch">
+            <div class="lang-btn active" id="lang-en" onclick="app.setLang('en')">EN</div>
+            <div class="lang-btn" id="lang-ua" onclick="app.setLang('ua')">UA</div>
+            <div class="lang-btn" id="lang-de" onclick="app.setLang('de')">DE</div>
         </div>
 
-        <div id="adminAuth">
-            <p style="font-size: 9px; color:#555; margin-bottom: 15px;">SELLER ACCESS</p>
-            <input type="password" id="adminCode" class="admin-input" placeholder="PASSCODE">
-            <button class="btn-secondary" style="width:100%;" onclick="admin.login()">AUTHORIZE</button>
-        </div>
-
-        <div id="adminPanel" class="admin-dashboard">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <span style="font-weight:bold;">SELLER LOGGED</span>
-                <span class="nav-link" onclick="admin.logout()">EXIT</span>
-            </div>
-            
-            <input type="file" id="itemImg" style="display:none;" onchange="admin.handleImg(this)">
-            <div class="upload-area" id="imgPrev" onclick="document.getElementById('itemImg').click()">
-                CLICK TO UPLOAD PRODUCT IMAGE
+        <div class="admin-box">
+            <div id="authPanel">
+                <p style="font-size: 9px; color:#555; margin-bottom: 15px;" data-i18n="sellerMode">SELLER AUTHORIZATION</p>
+                <input type="password" id="adminPass" class="form-input" placeholder="PASSCODE">
+                <button class="btn-main" onclick="admin.login()" style="background:transparent; color:#fff; border:1px solid #333;">LOGIN</button>
             </div>
 
-            <input type="text" id="itemName" class="admin-input" placeholder="PRODUCT NAME">
-            <input type="number" id="itemPrice" class="admin-input" placeholder="PRICE">
-            <button class="btn-modern" style="width:100%;" onclick="admin.add()">PUBLISH TO ARCHIVE</button>
+            <div id="dashboardPanel" style="display:none;">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 25px;">
+                    <span style="font-weight:900;">DASHBOARD</span>
+                    <span class="nav-link" onclick="admin.logout()">LOGOUT</span>
+                </div>
+                
+                <input type="file" id="fileInput" style="display:none;" onchange="admin.handleImg(this)">
+                <div style="width:100%; height:180px; border:1px dashed #333; display:flex; align-items:center; justify-content:center; cursor:pointer; background-size:cover; margin-bottom:20px; font-size:10px; color:#444;" id="imgPreview" onclick="document.getElementById('fileInput').click()">
+                    UPLOAD IMAGE
+                </div>
+
+                <input type="text" id="addName" class="form-input" placeholder="NAME">
+                <input type="number" id="addPrice" class="form-input" placeholder="PRICE ($)">
+                <button class="btn-main" onclick="admin.addItem()">PUBLISH ITEM</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const initialDB = [
+        /* ДАНІ ТА ПЕРЕКЛАДИ */
+        const initialProducts = [
             { id: 1, name: "HELMUT LANG 1999 PARKA", price: 850, img: null },
-            { id: 2, name: "YOHJI YAMAMOTO TROUSERS", price: 340, img: null },
-            { id: 3, name: "PRADA SPORT RED TAB VEST", price: 420, img: null },
-            { id: 4, name: "RICK OWENS RAMONES LOW", price: 600, img: null }
+            { id: 2, name: "YOHJI YAMAMOTO BLAZER", price: 420, img: null },
+            { id: 3, name: "PRADA SPORT RED TAB VEST", price: 310, img: null },
+            { id: 4, name: "RICK OWENS RAMONES", price: 650, img: null }
         ];
 
-        const i18n = {
-            en: { hero: "CURATED<br>ARCHIVE", settings: "PREFERENCES", bag: "BAG", total: "SUBTOTAL" },
-            ua: { hero: "ДОБІРНИЙ<br>АРХІВ", settings: "НАЛАШТУВАННЯ", bag: "КОШИК", total: "СУМА" },
-            de: { hero: "KURATIERTES<br>ARCHIV", settings: "OPTIONEN", bag: "TASCHE", total: "GESAMT" }
-        };
-
-        class REWEAR_APP {
-            constructor() {
-                this.db = JSON.parse(localStorage.getItem('rewear_v2_db')) || initialDB;
-                this.cart = [];
-                this.lang = 'en';
-                this.init();
-            }
-
-            init() {
-                this.render();
-                this.bind();
-            }
-
-            save() {
-                localStorage.setItem('rewear_v2_db', JSON.stringify(this.db));
-            }
-
-            render() {
-                const grid = document.getElementById('productGrid');
-                const search = document.getElementById('searchInput').value.toLowerCase();
-                grid.innerHTML = '';
-
-                const filtered = this.db.filter(p => p.name.toLowerCase().includes(search));
-                document.getElementById('itemCounter').innerText = `${filtered.length.toString().padStart(3, '0')} ITEMS IN STOCK`;
-
-                filtered.forEach(p => {
-                    const card = document.createElement('div');
-                    card.className = 'product-card';
-                    const del = window.admin && window.admin.active ? `<div class="del-badge" style="display:flex;" onclick="admin.remove(${p.id})">&times;</div>` : '';
-                    const img = p.img ? `url(${p.img})` : 'none';
-
-                    card.innerHTML = `
-                        <div class="img-container" onclick="app.addToCart(${p.id})">
-                            <div class="product-img" style="background-image:${img}; background-size:cover; background-position:center; height:100%;"></div>
-                            ${del}
-                        </div>
-                        <div class="card-info">
-                            <span class="product-name">${p.name}</span>
-                            <span class="product-price">$${p.price}</span>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-            }
-
-            addToCart(id) {
-                const item = this.db.find(p => p.id === id);
-                this.cart.push(item);
-                this.updateCart();
-                window.ui.open('cartDrawer');
-            }
-
-            updateCart() {
-                const body = document.getElementById('cartBody');
-                const count = document.getElementById('cartCount');
-                const total = document.getElementById('totalPrice');
-                count.innerText = `(${this.cart.length})`;
-                
-                body.innerHTML = '';
-                let sum = 0;
-                this.cart.forEach((item, idx) => {
-                    sum += Number(item.price);
-                    body.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-                            <div>
-                                <div style="font-weight:bold; font-size:11px;">${item.name}</div>
-                                <div style="color:red; font-size:9px; cursor:pointer;" onclick="app.removeFromCart(${idx})">REMOVE</div>
-                            </div>
-                            <div style="font-family:monospace;">$${item.price}</div>
-                        </div>
-                    `;
-                });
-                total.innerText = `$${sum.toFixed(2)}`;
-            }
-
-            removeFromCart(idx) {
-                this.cart.splice(idx, 1);
-                this.updateCart();
-            }
-
-            setLang(l) {
-                this.lang = l;
-                document.getElementById('hTitle').innerHTML = i18n[l].hero;
-                document.getElementById('settingsBtn').innerText = i18n[l].settings;
-                document.getElementById('totalLabel').innerText = i18n[l].total;
-                this.render();
-            }
-
-            bind() {
-                document.getElementById('searchInput').oninput = () => this.render();
-            }
-        }
-
-        class REWEAR_UI {
-            constructor() {
-                this.init();
-            }
-            init() {
-                document.getElementById('settingsBtn').onclick = () => this.open('settingsDrawer');
-                document.getElementById('cartBtn').onclick = () => this.open('cartDrawer');
-                document.getElementById('backdrop').onclick = () => this.close();
-            }
-            open(id) {
-                document.getElementById(id).classList.add('open');
-                document.getElementById('backdrop').classList.add('active');
-            }
-            close() {
-                document.querySelectorAll('.drawer').forEach(d => d.classList.remove('open'));
-                document.getElementById('backdrop').classList.remove('active');
-            }
-        }
-
-        class REWEAR_ADMIN {
-            constructor() {
-                this.active = false;
-                this.pass = "admin2026";
-                this.bufferImg = null;
-            }
-            login() {
-                if(document.getElementById('adminCode').value === this.pass) {
-                    this.active = true;
-                    document.getElementById('adminAuth').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    window.app.render();
-                } else { alert("ACCESS DENIED"); }
-            }
-            logout() {
-                this.active = false;
-                document.getElementById('adminAuth').style.display = 'block';
-                document.getElementById('adminPanel').style.display = 'none';
-                window.app.render();
-            }
-            handleImg(inp) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.bufferImg = e.target.result;
-                    document.getElementById('imgPrev').style.backgroundImage = `url(${e.target.result})`;
-                    document.getElementById('imgPrev').innerText = '';
-                };
-                reader.readAsDataURL(inp.files[0]);
-            }
-            add() {
-                const name = document.getElementById('itemName').value;
-                const price = document.getElementById('itemPrice').value;
-                if(!name || !price) return;
-                window.app.db.unshift({ id: Date.now(), name: name.toUpperCase(), price: price, img: this.bufferImg });
-                window.app.save();
-                window.app.render();
-                // Reset
-                document.getElementById('itemName').value = '';
-                document.getElementById('itemPrice').value = '';
-                document.getElementById('imgPrev').style.backgroundImage = 'none';
-                this.bufferImg = null;
-            }
-            remove(id) {
-                if(confirm("DELETE PERMANENTLY?")) {
-                    window.app.db = window.app.db.filter(p => p.id !== id);
-                    window.app.save();
-                    window.app.render();
-                }
-            }
-        }
-
-        window.onload = () => {
-            window.app = new REWEAR_APP();
-            window.ui = new REWEAR_UI();
-            window.admin = new REWEAR_ADMIN();
-        };
-    </script>
-</body>
-</html>
+        const translations = {
+            en: {
+                navSettings: "SETTINGS", navCart: "CART", hero: "CURATED<br>ARCHIVE",
+                cartTitle: "CART", total: "TOTAL", checkout: "CHECKOUT",
+                settingsTitle: "PREFERENCES", langLabel: "LANGUAGE", sellerMode: "SELLER AUTHORIZATION",
+                searchPlaceholder: "SEARCH PIECES...", empty: "CART IS EMPTY"
+            },
+            ua: {
+                navSettings: "НАЛАШТУВАННЯ", navCart: "КОШИК", hero: "ДОБІРНИЙ<br>АРХІВ",
+                cartTitle: "КОШИК", total: "СУМА", checkout: "ОФОРМИТИ ЗАМОВЛЕННЯ",
+                settingsTitle: "НАЛАШТУВАННЯ", langLabel: "МОВА", sellerMode: "ВХІД ДЛЯ ПРОДАВЦЯ",
+                searchPlaceholder: "ПОШУК ПО АРХІВУ...", empty: "КОШИК ПОРОЖНІЙ"
+            },
+            de: {
+                navSettings: "OPTIONEN", navCart: "TASCHE", hero: "KURATIERTES<br>ARCHIV",

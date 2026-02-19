@@ -156,7 +156,7 @@ header {
     width: 450px; height: 100%;
     background: var(--bg); border-left: 1px solid var(--border);
     z-index: 2500; transition: 0.5s var(--ease); padding: 40px;
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; overflow-y: auto;
 }
 .drawer.open { right: 0; }
 

@@ -1,75 +1,66 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RE—WAKE | Archived Garments</title>
+    <title>RE-WAKE | Underground Archive</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-void">
 
-    <div class="grain-overlay"></div>
     <div class="backdrop" id="backdrop"></div>
     
     <div class="modal-overlay" id="productModal">
         <div class="modal-content">
-            <div class="modal-close" onclick="ui.closeModal()">&times;</div>
+            <div class="modal-close" onclick="ui.closeModal()">[X]</div>
             <div class="modal-img-col">
-                <img id="mImg" src="" alt="Archive Item">
+                <img id="mImg" src="" alt="">
             </div>
             <div class="modal-info-col">
-                <div class="tech-label" style="margin-bottom: 30px;">ITEM_<span id="mId">00</span></div>
+                <div class="tech-label">ITEM_<span id="mId">0000</span></div>
+                <div class="modal-title" id="mTitle">PRODUCT</div>
                 
-                <div id="mViewMode" class="modal-scroll-area">
-                    <div class="modal-title" id="mTitle">PRODUCT</div>
-                    
-                    <div class="tech-specs">
-                        <div class="spec-row"><span>Year:</span> <span>2019</span></div>
-                        <div class="spec-row"><span>Origin:</span> <span>EU</span></div>
-                        <div class="spec-row"><span>Condition:</span> <span>8.5/10</span></div>
-                        <div class="spec-row"><span>Fabric:</span> <span>Cotton Blend</span></div>
-                        <div class="spec-row"><span>Previous Owners:</span> <span>1</span></div>
-                        <div class="spec-row"><span>Archive Added:</span> <span id="mDate">02.2026</span></div>
-                    </div>
+                <div class="tech-specs">
+                    <div class="spec-row"><span>Year:</span> <span>2019</span></div>
+                    <div class="spec-row"><span>Origin:</span> <span>EU</span></div>
+                    <div class="spec-row"><span>Condition:</span> <span>8.5/10</span></div>
+                    <div class="spec-row"><span>Previous Owners:</span> <span>1</span></div>
+                </div>
 
-                    <div class="modal-price" id="mPrice">$000</div>
-                    
-                    <div style="margin-top: auto;">
-                        <button class="btn" style="width:100%; margin-bottom: 15px;" onclick="app.addToCartFromModal()" data-t="add_cart">ADD TO CART</button>
-                        <button id="adminDeleteBtn" class="btn-outline" style="width:100%; border-color:#555; color:#555; display:none; margin-bottom: 15px;" onclick="sysAdmin.deleteCurrentItem()">DELETE ITEM</button>
-                        <div class="disclaimer">This piece is pre-owned. Signs of wear may be visible.</div>
-                    </div>
+                <div class="modal-price" id="mPrice">000</div>
+                
+                <div class="modal-actions">
+                    <button class="btn-sharp" onclick="app.addToCartFromModal()" data-t="add_cart">ADD TO CART</button>
+                    <button id="adminDeleteBtn" class="btn-sharp admin-btn" onclick="sysAdmin.deleteCurrentItem()" style="display:none;">DELETE ITEM</button>
                 </div>
             </div>
         </div>
     </div>
 
     <header>
-        <div class="logo" onclick="location.reload()">RE—WAKE</div>
+        <div class="logo" onclick="location.reload()">RE-WAKE</div>
         <div class="header-nav">
-            <div class="nav-link" id="btnSettings" onclick="ui.openDrawer('settingsDrawer')">SYSTEM</div>
-            <div class="nav-link" id="btnCart" onclick="ui.openDrawer('cartDrawer')">
-                CART (<span id="cartCount">0</span>)
-            </div>
+            <span class="nav-link" onclick="ui.openDrawer('settingsDrawer')">SYSTEM</span>
+            <span class="nav-divider">|</span>
+            <span class="nav-link" onclick="ui.openDrawer('cartDrawer')">CART (<span id="cartCount">0</span>)</span>
         </div>
     </header>
 
     <div class="hero-section">
-        <div class="hero-center">
+        <div class="hero-content">
             <h1 class="hero-text" id="heroText">UNDERGROUND<br>ARCHIVE</h1>
-            <div class="hero-subtext" style="margin-top: 20px;">Curated second-hand pieces. Selected, not mass.</div>
+            <div class="hero-subtext">Curated second-hand pieces. Selected, not mass.</div>
         </div>
-        <div class="divider hero-line"></div>
         <div class="hero-footer">
-            <div class="tech-label">DROP_01 — <span id="itemCounter">...</span> ITEMS</div>
+            <div class="tech-label">DROP_01 — <span id="itemCounter">0</span> ITEMS</div>
             <div class="tech-label link-hover" onclick="document.getElementById('archive-grid').scrollIntoView({behavior: 'smooth'})">ENTER &rarr;</div>
         </div>
     </div>
 
-    <div class="container" id="archive-grid">
+    <div class="archive-section" id="archive-grid">
         <div class="controls-bar">
             <input type="text" class="input-std" id="search" placeholder="SEARCH ARCHIVE...">
         </div>
@@ -79,64 +70,66 @@
     <div class="drawer" id="cartDrawer">
         <div class="drawer-header">
             <div class="drawer-title" data-t="bag_title">CART</div>
-            <div class="nav-link link-hover" onclick="ui.closeDrawers()" data-t="close">CLOSE</div>
+            <div class="nav-link link-hover" onclick="ui.closeDrawers()" data-t="close">[CLOSE]</div>
         </div>
-        <div id="cartList" style="flex:1; overflow-y: auto;"></div>
+        <div id="cartList" class="drawer-scroll"></div>
         <div class="drawer-footer">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-family: var(--font-mono); font-size: 11px;">
+            <div class="drawer-total">
                 <span data-t="subtotal">SUBTOTAL</span>
                 <span id="cartTotal">0</span>
             </div>
-            <button class="btn" style="width:100%;" onclick="app.checkout()" data-t="checkout">PROCEED</button>
+            <button class="btn-sharp" onclick="app.checkout()" data-t="checkout">PROCEED</button>
         </div>
     </div>
 
     <div class="drawer" id="settingsDrawer">
         <div class="drawer-header">
             <div class="drawer-title">SYSTEM / RE-WAKE</div>
-            <div class="nav-link link-hover" onclick="ui.closeDrawers()" data-t="close">CLOSE</div>
+            <div class="nav-link link-hover" onclick="ui.closeDrawers()" data-t="close">[CLOSE]</div>
         </div>
 
-        <div class="section-title">THEME</div>
-        <div class="settings-grid">
-            <div class="setting-card active" id="themeVoid" onclick="settings.setTheme('void')">BLACK VOID</div>
-            <div class="setting-card" id="themeConcrete" onclick="settings.setTheme('concrete')">CONCRETE</div>
-        </div>
-
-        <div class="section-title">LANGUAGE</div>
-        <div class="settings-grid">
-            <div class="setting-card active" id="lang-en" onclick="app.setLang('en')">EN</div>
-            <div class="setting-card" id="lang-ua" onclick="app.setLang('ua')">UA</div>
-        </div>
-
-        <div class="section-title">CURRENCY</div>
-        <div class="settings-grid" style="grid-template-columns: 1fr 1fr 1fr;">
-            <div class="setting-card active" id="currUSD" onclick="settings.setCurrency('USD')">USD</div>
-            <div class="setting-card" id="currUAH" onclick="settings.setCurrency('UAH')">UAH</div>
-            <div class="setting-card" id="currEUR" onclick="settings.setCurrency('EUR')">EUR</div>
-        </div>
-
-        <div class="section-title">ADMIN ACCESS</div>
-        <div id="loginForm">
-            <input type="password" id="adminPassInput" class="input-std" placeholder="PASSCODE">
-            <button class="btn-outline" style="width:100%; margin-top: 10px;" onclick="sysAdmin.login()">UNLOCK</button>
-        </div>
-        
-        <div id="adminPanel" style="display:none;">
-            <div class="status-badge" style="color: #EDEDED; border-color: #777;">ADMIN MODE ACTIVE</div>
-            <div style="background: var(--surface); padding: 15px; border: 1px solid var(--border); margin-bottom: 20px;">
-                <input type="text" id="newItemName" class="input-std" placeholder="ITEM NAME">
-                <input type="number" id="newItemPrice" class="input-std" placeholder="PRICE">
-                <textarea id="newItemDesc" class="input-std" placeholder="DESCRIPTION" rows="3"></textarea>
-                <input type="file" id="newItemImg" accept="image/*" class="input-std" style="padding: 10px;">
-                <button id="btnPublish" class="btn" style="width:100%; margin-top:10px;" onclick="sysAdmin.createItem()">PUBLISH TO ARCHIVE</button>
+        <div class="drawer-scroll">
+            <div class="section-title">THEME</div>
+            <div class="settings-grid">
+                <div class="setting-card active" id="themeVoid" onclick="settings.setTheme('void')">BLACK VOID</div>
+                <div class="setting-card" id="themeConcrete" onclick="settings.setTheme('concrete')">CONCRETE</div>
             </div>
-            <button class="nav-link link-hover" style="color:#777; width:100%; text-align:center;" onclick="sysAdmin.logout()">LOCK SYSTEM</button>
+
+            <div class="section-title">LANGUAGE</div>
+            <div class="settings-grid">
+                <div class="setting-card active" id="lang-ua" onclick="app.setLang('ua')">UA</div>
+                <div class="setting-card" id="lang-en" onclick="app.setLang('en')">EN</div>
+            </div>
+
+            <div class="section-title">CURRENCY</div>
+            <div class="settings-grid cols-3">
+                <div class="setting-card" id="currUAH" onclick="settings.setCurrency('UAH')">UAH</div>
+                <div class="setting-card active" id="currUSD" onclick="settings.setCurrency('USD')">USD</div>
+                <div class="setting-card" id="currEUR" onclick="settings.setCurrency('EUR')">EUR</div>
+            </div>
+
+            <div class="section-title" style="margin-top: 40px;">ADMIN ACCESS</div>
+            <div id="loginForm">
+                <input type="password" id="adminPassInput" class="input-std" placeholder="PASSCODE">
+                <button class="btn-sharp" style="width:100%; margin-top: 10px;" onclick="sysAdmin.login()">UNLOCK</button>
+            </div>
+            
+            <div id="adminPanel" style="display:none;">
+                <div class="status-badge">ADMIN MODE ACTIVE</div>
+                <div class="admin-box">
+                    <input type="text" id="newItemName" class="input-std" placeholder="ITEM NAME">
+                    <input type="number" id="newItemPrice" class="input-std" placeholder="PRICE">
+                    <textarea id="newItemDesc" class="input-std" placeholder="DESCRIPTION" rows="3"></textarea>
+                    <input type="file" id="newItemImg" accept="image/*" class="input-std">
+                    <button id="btnPublish" class="btn-sharp" style="width:100%; margin-top:10px;" onclick="sysAdmin.createItem()">PUBLISH TO ARCHIVE</button>
+                </div>
+                <button class="nav-link link-hover" style="width:100%; text-align:left; margin-top: 20px;" onclick="sysAdmin.logout()">[LOCK SYSTEM]</button>
+            </div>
         </div>
         
         <div class="sys-footer">
             <div style="margin-bottom: 5px;">VERSION 01.ARCHIVE</div>
-            <div>SERVER STATUS: <span style="color: #EDEDED;">STABLE</span></div>
+            <div>SERVER STATUS: STABLE</div>
         </div>
     </div>
 

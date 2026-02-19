@@ -311,13 +311,39 @@ class AdminSystem {
         const fileInput = document.getElementById('newItemImg');
         const btn = document.getElementById('btnPublish');
 
-        if (!name || !price) return;
+        if (!name || !price) {
+            window.notify.show('ENTER NAME AND PRICE');
+            return;
+        }
 
         btn.innerText = "UPLOADING...";
+        btn.style.pointerEvents = "none";
+
         let file = fileInput.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e) => this.saveToDb(name, price, desc, e.target.result, btn);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    let scaleSize = 1;
+                    
+                    if (img.width > MAX_WIDTH) {
+                        scaleSize = MAX_WIDTH / img.width;
+                    }
+                    
+                    canvas.width = img.width * scaleSize;
+                    canvas.height = img.height * scaleSize;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                    this.saveToDb(name, price, desc, compressedBase64, btn);
+                };
+                img.src = e.target.result;
+            };
             reader.readAsDataURL(file);
         } else {
             this.saveToDb(name, price, desc, null, btn);
@@ -336,8 +362,14 @@ class AdminSystem {
             document.getElementById('newItemDesc').value = '';
             document.getElementById('newItemImg').value = '';
             btn.innerText = "PUBLISH TO ARCHIVE";
+            btn.style.pointerEvents = "auto";
             window.ui.closeDrawers();
             window.notify.show('PUBLISHED TO ARCHIVE');
+        }).catch((error) => {
+            console.error(error);
+            btn.innerText = "ERROR. TRY AGAIN";
+            btn.style.pointerEvents = "auto";
+            window.notify.show('UPLOAD FAILED');
         });
     }
     deleteCurrentItem() {

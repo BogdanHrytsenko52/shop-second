@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-// Ваші ключі Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyATJJPdiTWusShpRRZl2_KGLE4gIodM5SA",
     authDomain: "rewear-shop.firebaseapp.com",
@@ -20,23 +19,23 @@ const DICTIONARY = {
     en: {
         hero: "MATTE<br>OBJECTS", nav_sys: "SYSTEM", nav_bag: "BAG", bag_title: "YOUR BAG", sys_title: "SYSTEM", close: "CLOSE",
         subtotal: "SUBTOTAL", checkout: "PROCEED", add_cart: "ADD TO CART", s_visual: "VISUAL MODE", s_audio: "AUDIO UI",
-        s_lang: "LOCALIZATION", s_curr: "CURRENCY", t_matte: "MATTE BLACK", t_modern: "MODERN GREY",
+        s_lang: "LOCALIZATION", s_curr: "CURRENCY", t_matte: "MATTE BLACK", t_modern: "MODERN GREY", s_admin: "ADMIN ACCESS", btn_login: "UNLOCK",
         empty_bag: "YOUR BAG IS EMPTY", item_added: "ITEM ADDED TO BAG", item_removed: "ITEM REMOVED",
-        order_success: "ORDER RECEIVED (DEMO)"
+        order_success: "ORDER RECEIVED (DEMO)", access_granted: "ADMIN ACCESS GRANTED", access_denied: "ACCESS DENIED", saved: "PUBLISHED TO CLOUD", deleted: "ITEM DELETED"
     },
     ua: {
         hero: "МАТОВИЙ<br>АРХІВ", nav_sys: "СИСТЕМА", nav_bag: "КОШИК", bag_title: "ВАШ КОШИК", sys_title: "НАЛАШТУВАННЯ", close: "ЗАКРИТИ",
         subtotal: "СУМА", checkout: "ОФОРМИТИ", add_cart: "У КОШИК", s_visual: "ТЕМА ДИЗАЙНУ", s_audio: "ЗВУКИ",
-        s_lang: "МОВА", s_curr: "ВАЛЮТА", t_matte: "ГЛИБОКИЙ ЧОРНИЙ", t_modern: "ТЕХНО СІРИЙ",
+        s_lang: "МОВА", s_curr: "ВАЛЮТА", t_matte: "ГЛИБОКИЙ ЧОРНИЙ", t_modern: "ТЕХНО СІРИЙ", s_admin: "ВХІД ПРОДАВЦЯ", btn_login: "УВІЙТИ",
         empty_bag: "КОШИК ПОРОЖНІЙ", item_added: "ТОВАР ДОДАНО", item_removed: "ТОВАР ВИДАЛЕНО",
-        order_success: "ЗАМОВЛЕННЯ ПРИЙНЯТО (ДЕМО)"
+        order_success: "ЗАМОВЛЕННЯ ПРИЙНЯТО (ДЕМО)", access_granted: "РЕЖИМ ПРОДАВЦЯ АКТИВНИЙ", access_denied: "ДОСТУП ЗАБОРОНЕНО", saved: "ТОВАР ОПУБЛІКОВАНО", deleted: "ТОВАР ВИДАЛЕНО"
     },
     de: {
         hero: "MATTE<br>OBJEKTE", nav_sys: "SYSTEM", nav_bag: "TASCHE", bag_title: "IHRE TASCHE", sys_title: "EINSTELLUNGEN", close: "SCHLIEßEN",
         subtotal: "ZWISCHENSUMME", checkout: "WEITER", add_cart: "IN DEN WARENKORB", s_visual: "VISUELLER MODUS", s_audio: "AUDIO",
-        s_lang: "SPRACHE", s_curr: "WÄHRUNG", t_matte: "MATTSCHWARZ", t_modern: "MODERN GRAU",
+        s_lang: "SPRACHE", s_curr: "WÄHRUNG", t_matte: "MATTSCHWARZ", t_modern: "MODERN GRAU", s_admin: "VERKÄUFERZUGANG", btn_login: "ENTSPERREN",
         empty_bag: "TASCHE IST LEER", item_added: "ZUM WARENKORB HINZUGEFÜGT", item_removed: "ARTIKEL ENTFERNT",
-        order_success: "BESTELLUNG AUFGENOMMEN"
+        order_success: "BESTELLUNG AUFGENOMMEN", access_granted: "ADMINISTRATOR ZUGRIFF", access_denied: "ZUGRIFF VERWEIGERT", saved: "VERÖFFENTLICHT", deleted: "GELÖSCHT"
     }
 };
 
@@ -60,6 +59,20 @@ class AudioController {
         gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
         osc.start();
         osc.stop(this.ctx.currentTime + 0.05);
+    }
+    error() {
+        if (!this.enabled) return;
+        this.resume();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.frequency.value = 150;
+        osc.type = 'sawtooth';
+        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.15);
     }
     success() {
         if (!this.enabled) return;
@@ -158,7 +171,6 @@ class SettingsManager {
             window.app.updateCartUI();
         }
     }
-    // ВИПРАВЛЕННЯ: Додана функція setSound для роботи кнопки
     setSound(bool) {
         window.audio.toggle(bool);
         this.updateSoundUI(bool);
@@ -255,6 +267,9 @@ class ShopCore {
         const imgEl = document.getElementById('mImg');
         imgEl.src = p.img || '';
         imgEl.style.display = p.img ? 'block' : 'none';
+        
+        // Показувати кнопку видалення тільки якщо адмін онлайн
+        document.getElementById('adminDeleteBtn').style.display = (window.sysAdmin && window.sysAdmin.active) ? 'block' : 'none';
         
         window.ui.openModal();
     }
@@ -358,6 +373,100 @@ class UIManager {
     }
 }
 
+class AdminSystem {
+    constructor() {
+        this.active = false;
+        this.passcode = "admin2026"; // Ваш пароль
+    }
+    
+    login() {
+        const val = document.getElementById('adminPassInput').value.trim();
+        if (val === this.passcode) {
+            this.active = true;
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminPassInput').value = '';
+            window.audio.success();
+            window.notify.show('access_granted');
+        } else {
+            window.audio.error();
+            window.notify.show('access_denied');
+        }
+    }
+    
+    logout() {
+        this.active = false;
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('adminDeleteBtn').style.display = 'none';
+        window.audio.click();
+    }
+
+    createItem() {
+        const name = document.getElementById('newItemName').value.trim();
+        const price = document.getElementById('newItemPrice').value;
+        const desc = document.getElementById('newItemDesc').value;
+        const fileInput = document.getElementById('newItemImg');
+        const btn = document.getElementById('btnPublish');
+
+        if (!name || !price) {
+            window.audio.error();
+            alert(window.app.lang === 'ua' ? "Введіть назву та ціну!" : "Enter name and price!");
+            return;
+        }
+
+        btn.innerText = "UPLOADING...";
+        btn.style.pointerEvents = "none";
+
+        let file = fileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.saveToDb(name, price, desc, e.target.result, btn);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            this.saveToDb(name, price, desc, null, btn);
+        }
+    }
+
+    saveToDb(name, price, desc, imgBase64, btn) {
+        push(ref(db, 'products'), {
+            name: name.toUpperCase(),
+            price: Number(price),
+            desc: desc || "",
+            img: imgBase64 || "",
+            createdAt: Date.now()
+        }).then(() => {
+            window.audio.success();
+            document.getElementById('newItemName').value = '';
+            document.getElementById('newItemPrice').value = '';
+            document.getElementById('newItemDesc').value = '';
+            document.getElementById('newItemImg').value = '';
+            btn.innerText = "PUBLISH ITEM";
+            btn.style.pointerEvents = "auto";
+            window.ui.closeDrawers();
+            window.notify.show('saved');
+        }).catch((error) => {
+            console.error(error);
+            window.audio.error();
+            btn.innerText = "ERROR! CHECK RULES";
+            btn.style.pointerEvents = "auto";
+            alert("Помилка запису. Перевірте Firebase Rules (дозволи).");
+        });
+    }
+
+    deleteCurrentItem() {
+        if (confirm(window.app.lang === 'ua' ? 'Точно видалити цей товар?' : 'Confirm deletion?')) {
+            remove(ref(db, 'products/' + window.app.currId)).then(() => {
+                window.audio.click();
+                window.ui.closeModal();
+                window.notify.show('deleted');
+            });
+        }
+    }
+}
+
 // GLOBAL INIT
 window.onload = () => {
     window.audio = new AudioController();
@@ -365,4 +474,5 @@ window.onload = () => {
     window.settings = new SettingsManager();
     window.app = new ShopCore();
     window.ui = new UIManager();
+    window.sysAdmin = new AdminSystem();
 };

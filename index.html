@@ -28,6 +28,7 @@
                     <div class="divider"></div>
                     <p class="modal-desc" id="mDesc">Loading...</p>
                     <button class="btn" style="width:100%; margin-top:auto;" onclick="app.addToCartFromModal()" data-t="add_cart">ADD TO CART</button>
+                    <button id="adminDeleteBtn" class="btn-outline" style="width:100%; margin-top:10px; border-color:red; color:red; display:none;" onclick="sysAdmin.deleteCurrentItem()">DELETE ITEM</button>
                 </div>
             </div>
         </div>
@@ -111,6 +112,27 @@
             <div class="setting-card" id="currEUR" onclick="settings.setCurrency('EUR')">
                 <div class="setting-val">EUR €</div>
             </div>
+        </div>
+
+        <div class="section-title" data-t="s_admin">ADMIN ACCESS</div>
+        <div id="loginForm">
+            <input type="password" id="adminPassInput" class="input-std" placeholder="PASSCODE (admin2026)">
+            <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="sysAdmin.login()" data-t="btn_login">UNLOCK</button>
+        </div>
+        
+        <div id="adminPanel" style="display:none;">
+            <div class="status-badge">ADMIN MODE</div>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border: 1px solid var(--border); margin-bottom: 20px;">
+                <h4 style="margin-bottom: 15px; font-size: 10px; color: var(--text-sec);">ADD NEW ITEM</h4>
+                <input type="text" id="newItemName" class="input-std" placeholder="ITEM NAME">
+                <input type="number" id="newItemPrice" class="input-std" placeholder="PRICE">
+                <textarea id="newItemDesc" class="input-std" placeholder="DESCRIPTION" rows="3"></textarea>
+                <input type="file" id="newItemImg" accept="image/*" class="input-std" style="padding: 10px;">
+                <button id="btnPublish" class="btn" style="width:100%; margin-top:10px;" onclick="sysAdmin.createItem()">PUBLISH ITEM</button>
+            </div>
+
+            <button class="nav-link" style="color:red; width:100%; text-align:center;" onclick="sysAdmin.logout()">LOCK SYSTEM</button>
         </div>
         
         <div style="margin-top:auto; padding-top:20px; border-top:1px solid var(--border); opacity: 0.5;">

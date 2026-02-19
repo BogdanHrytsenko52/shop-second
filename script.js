@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-// Ваші ключі (в реальному проекті правила мають бути налаштовані в консолі Firebase)
+// Ваші ключі Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyATJJPdiTWusShpRRZl2_KGLE4gIodM5SA",
     authDomain: "rewear-shop.firebaseapp.com",
@@ -16,31 +16,27 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const productsRef = ref(db, 'products');
 
-// Словник перекладів
 const DICTIONARY = {
     en: {
         hero: "MATTE<br>OBJECTS", nav_sys: "SYSTEM", nav_bag: "BAG", bag_title: "YOUR BAG", sys_title: "SYSTEM", close: "CLOSE",
         subtotal: "SUBTOTAL", checkout: "PROCEED", add_cart: "ADD TO CART", s_visual: "VISUAL MODE", s_audio: "AUDIO UI",
-        s_lang: "LOCALIZATION", s_curr: "CURRENCY", s_admin: "ADMIN ACCESS", t_matte: "MATTE BLACK", t_modern: "MODERN GREY",
-        btn_login: "UNLOCK", empty_bag: "YOUR BAG IS EMPTY", item_added: "ITEM ADDED TO BAG", item_removed: "ITEM REMOVED",
-        access_denied: "ACCESS DENIED", access_granted: "ADMIN ACCESS GRANTED", saved: "CHANGES SAVED TO CLOUD",
-        deleted: "ITEM DELETED PERMANENTLY", fill_data: "PLEASE FILL ALL FIELDS", order_success: "ORDER RECEIVED (DEMO)"
+        s_lang: "LOCALIZATION", s_curr: "CURRENCY", t_matte: "MATTE BLACK", t_modern: "MODERN GREY",
+        empty_bag: "YOUR BAG IS EMPTY", item_added: "ITEM ADDED TO BAG", item_removed: "ITEM REMOVED",
+        order_success: "ORDER RECEIVED (DEMO)"
     },
     ua: {
         hero: "МАТОВИЙ<br>АРХІВ", nav_sys: "СИСТЕМА", nav_bag: "КОШИК", bag_title: "ВАШ КОШИК", sys_title: "НАЛАШТУВАННЯ", close: "ЗАКРИТИ",
         subtotal: "СУМА", checkout: "ОФОРМИТИ", add_cart: "У КОШИК", s_visual: "ТЕМА ДИЗАЙНУ", s_audio: "ЗВУКИ",
-        s_lang: "МОВА", s_curr: "ВАЛЮТА", s_admin: "ВХІД ПРОДАВЦЯ", t_matte: "ГЛИБОКИЙ ЧОРНИЙ", t_modern: "ТЕХНО СІРИЙ",
-        btn_login: "УВІЙТИ", empty_bag: "КОШИК ПОРОЖНІЙ", item_added: "ТОВАР ДОДАНО", item_removed: "ТОВАР ВИДАЛЕНО",
-        access_denied: "ДОСТУП ЗАБОРОНЕНО", access_granted: "РЕЖИМ ПРОДАВЦЯ АКТИВНИЙ", saved: "ЗБЕРЕЖЕНО В ХМАРУ",
-        deleted: "ТОВАР ВИДАЛЕНО НАЗАВЖДИ", fill_data: "ЗАПОВНІТЬ ВСІ ПОЛЯ", order_success: "ЗАМОВЛЕННЯ ПРИЙНЯТО (ДЕМО)"
+        s_lang: "МОВА", s_curr: "ВАЛЮТА", t_matte: "ГЛИБОКИЙ ЧОРНИЙ", t_modern: "ТЕХНО СІРИЙ",
+        empty_bag: "КОШИК ПОРОЖНІЙ", item_added: "ТОВАР ДОДАНО", item_removed: "ТОВАР ВИДАЛЕНО",
+        order_success: "ЗАМОВЛЕННЯ ПРИЙНЯТО (ДЕМО)"
     },
     de: {
         hero: "MATTE<br>OBJEKTE", nav_sys: "SYSTEM", nav_bag: "TASCHE", bag_title: "IHRE TASCHE", sys_title: "EINSTELLUNGEN", close: "SCHLIEßEN",
         subtotal: "ZWISCHENSUMME", checkout: "WEITER", add_cart: "IN DEN WARENKORB", s_visual: "VISUELLER MODUS", s_audio: "AUDIO",
-        s_lang: "SPRACHE", s_curr: "WÄHRUNG", s_admin: "VERKÄUFERZUGANG", t_matte: "MATTSCHWARZ", t_modern: "MODERN GRAU",
-        btn_login: "ENTSPERREN", empty_bag: "TASCHE IST LEER", item_added: "ZUM WARENKORB HINZUGEFÜGT", item_removed: "ARTIKEL ENTFERNT",
-        access_denied: "ZUGRIFF VERWEIGERT", access_granted: "ADMINISTRATOR ZUGRIFF", saved: "IN DER CLOUD GESPEICHERT",
-        deleted: "DAUERHAFT GELÖSCHT", fill_data: "BITTE ALLE FELDER AUSFÜLLEN", order_success: "BESTELLUNG AUFGENOMMEN"
+        s_lang: "SPRACHE", s_curr: "WÄHRUNG", t_matte: "MATTSCHWARZ", t_modern: "MODERN GRAU",
+        empty_bag: "TASCHE IST LEER", item_added: "ZUM WARENKORB HINZUGEFÜGT", item_removed: "ARTIKEL ENTFERNT",
+        order_success: "BESTELLUNG AUFGENOMMEN"
     }
 };
 
@@ -65,20 +61,6 @@ class AudioController {
         osc.start();
         osc.stop(this.ctx.currentTime + 0.05);
     }
-    error() {
-        if (!this.enabled) return;
-        this.resume();
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.frequency.value = 150;
-        osc.type = 'sawtooth';
-        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.15);
-    }
     success() {
         if (!this.enabled) return;
         this.resume();
@@ -95,7 +77,6 @@ class AudioController {
     toggle(bool) {
         this.enabled = bool;
         localStorage.setItem('rewear_sound', bool);
-        if (bool) this.success();
     }
     resume() {
         if (this.ctx.state === 'suspended') {
@@ -177,6 +158,12 @@ class SettingsManager {
             window.app.updateCartUI();
         }
     }
+    // ВИПРАВЛЕННЯ: Додана функція setSound для роботи кнопки
+    setSound(bool) {
+        window.audio.toggle(bool);
+        this.updateSoundUI(bool);
+        if (bool) window.audio.click();
+    }
     updateSoundUI(bool) {
         document.getElementById('soundOn').className = bool ? 'setting-card active' : 'setting-card';
         document.getElementById('soundOff').className = !bool ? 'setting-card active' : 'setting-card';
@@ -219,7 +206,7 @@ class ShopCore {
                     this.products.push({ dbKey: key, ...data[key] });
                 });
             }
-            this.products.reverse(); // Newest first
+            this.products.reverse();
             this.renderGrid();
             loader.innerText = `${this.products.length} ARCHIVE UNITS`;
         }, (error) => {
@@ -269,18 +256,6 @@ class ShopCore {
         imgEl.src = p.img || '';
         imgEl.style.display = p.img ? 'block' : 'none';
         
-        if (window.sysAdmin && window.sysAdmin.active) {
-            document.getElementById('mViewMode').style.display = 'none';
-            document.getElementById('mEditMode').style.display = 'block';
-            document.getElementById('mImgEditBtn').style.display = 'block';
-            document.getElementById('eTitle').value = p.name;
-            document.getElementById('ePrice').value = p.price;
-            document.getElementById('eDesc').value = p.desc;
-        } else {
-            document.getElementById('mViewMode').style.display = 'block';
-            document.getElementById('mEditMode').style.display = 'none';
-            document.getElementById('mImgEditBtn').style.display = 'none';
-        }
         window.ui.openModal();
     }
     addToCartFromModal() {
@@ -383,106 +358,6 @@ class UIManager {
     }
 }
 
-class AdminSystem {
-    constructor() {
-        this.active = false;
-        this.tempImg = null;
-        this.passcode = "admin2026";
-    }
-    login() {
-        const val = document.getElementById('adminPassInput').value.trim();
-        if (val === this.passcode) {
-            this.active = true;
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('adminPassInput').value = '';
-            window.audio.success();
-            window.notify.show('access_granted');
-            window.app.renderGrid();
-        } else {
-            window.audio.error();
-            window.notify.show('access_denied');
-        }
-    }
-    logout() {
-        this.active = false;
-        document.getElementById('loginForm').style.display = 'block';
-        document.getElementById('adminPanel').style.display = 'none';
-        window.audio.click();
-        window.app.renderGrid();
-    }
-    create() {
-        console.log("Attempting to create item...");
-        
-        const newItem = {
-            name: "NEW ITEM",
-            price: 0,
-            desc: "Description placeholder...",
-            img: "",
-            createdAt: Date.now()
-        };
-
-        push(productsRef, newItem).then(() => {
-            console.log("Item created successfully");
-            window.audio.success();
-            window.notify.show('saved');
-            window.ui.closeDrawers();
-        }).catch((error) => {
-            console.error("Firebase Create Error:", error);
-            window.audio.error();
-            alert("Error: Database permission denied or invalid config.\nCheck console (F12) for details.");
-        });
-    }
-    updateImgPreview(input) {
-        const file = input.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.tempImg = e.target.result;
-                document.getElementById('mImg').src = this.tempImg;
-                document.getElementById('mImg').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-    saveChanges() {
-        const name = document.getElementById('eTitle').value.trim();
-        const price = document.getElementById('ePrice').value;
-        if (!name || !price) {
-            window.audio.error();
-            window.notify.show('fill_data');
-            return;
-        }
-        const dbKey = window.app.currId;
-        const updates = {
-            name: name.toUpperCase(),
-            price: Number(price),
-            desc: document.getElementById('eDesc').value
-        };
-        if (this.tempImg) {
-            updates.img = this.tempImg;
-        }
-        update(ref(db, 'products/' + dbKey), updates).then(() => {
-            this.tempImg = null;
-            window.audio.success();
-            window.notify.show('saved');
-            window.ui.closeModal();
-        }).catch(err => {
-            console.error(err);
-            alert("Error saving: " + err.message);
-        });
-    }
-    deleteCurrent() {
-        if (confirm('CONFIRM DELETE?')) {
-            remove(ref(db, 'products/' + window.app.currId)).then(() => {
-                window.audio.click();
-                window.notify.show('deleted');
-                window.ui.closeModal();
-            }).catch(err => alert("Error deleting: " + err.message));
-        }
-    }
-}
-
 // GLOBAL INIT
 window.onload = () => {
     window.audio = new AudioController();
@@ -490,5 +365,4 @@ window.onload = () => {
     window.settings = new SettingsManager();
     window.app = new ShopCore();
     window.ui = new UIManager();
-    window.sysAdmin = new AdminSystem();
 };

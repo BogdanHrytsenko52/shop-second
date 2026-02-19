@@ -16,15 +16,13 @@ const db = getDatabase(appInstance);
 const productsRef = ref(db, 'products');
 
 const DICTIONARY = {
-    en: { bag_title: "CART", subtotal: "SUBTOTAL", checkout: "PROCEED", add_cart: "ADD TO CART", close: "CLOSE", empty_bag: "ARCHIVE IS EMPTY" },
-    ua: { bag_title: "КОШИК", subtotal: "СУМА", checkout: "ОФОРМИТИ", add_cart: "У КОШИК", close: "ЗАКРИТИ", empty_bag: "АРХІВ ПОРОЖНІЙ" },
-    de: { bag_title: "WARENKORB", subtotal: "ZWISCHENSUMME", checkout: "WEITER", add_cart: "ZUM WARENKORB", close: "SCHLIEßEN", empty_bag: "LEER" }
+    en: { bag_title: "CART", subtotal: "SUBTOTAL", checkout: "PROCEED", add_cart: "ADD TO CART", close: "[CLOSE]", empty_bag: "ARCHIVE IS EMPTY" },
+    ua: { bag_title: "КОШИК", subtotal: "СУМА", checkout: "ОФОРМИТИ", add_cart: "У КОШИК", close: "[ЗАКРИТИ]", empty_bag: "АРХІВ ПОРОЖНІЙ" }
 };
 
 const RATES = { USD: 1, UAH: 41, EUR: 0.92 };
 const SYMBOLS = { USD: '$', UAH: '₴', EUR: '€' };
 
-// Text Animation Logic (Split letters for CSS fade-in)
 function animateHeroText() {
     const heroEl = document.getElementById('heroText');
     if(!heroEl) return;
@@ -35,12 +33,52 @@ function animateHeroText() {
         line.split('').forEach((char, charIdx) => {
             const span = document.createElement('span');
             span.innerHTML = char === ' ' ? '&nbsp;' : char;
-            // Stagger animation delay
             span.style.animationDelay = `${(lineIdx * 0.3) + (charIdx * 0.05)}s`;
             lineDiv.appendChild(span);
         });
         heroEl.appendChild(lineDiv);
     });
+}
+
+class Notificator {
+    constructor() {
+        this.container = document.createElement('div');
+        this.container.style.position = 'fixed';
+        this.container.style.bottom = '40px';
+        this.container.style.left = '40px';
+        this.container.style.zIndex = '3000';
+        this.container.style.display = 'flex';
+        this.container.style.flexDirection = 'column';
+        this.container.style.gap = '10px';
+        this.container.style.pointerEvents = 'none';
+        document.body.appendChild(this.container);
+    }
+    show(msgKey) {
+        const text = DICTIONARY[window.app.lang][msgKey] || msgKey;
+        const toast = document.createElement('div');
+        toast.innerText = text;
+        toast.style.background = '#0F0F0F';
+        toast.style.color = '#EDEDED';
+        toast.style.border = '1px solid #1A1A1A';
+        toast.style.padding = '16px 24px';
+        toast.style.fontFamily = "'JetBrains Mono', monospace";
+        toast.style.fontSize = '11px';
+        toast.style.textTransform = 'uppercase';
+        toast.style.letterSpacing = '1px';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.4s cubic-bezier(0.19, 1, 0.22, 1)';
+        this.container.appendChild(toast);
+        requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+        });
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(10px)';
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
 }
 
 class SettingsManager {
@@ -65,7 +103,8 @@ class SettingsManager {
         this.currency = c;
         localStorage.setItem('rewear_currency', c);
         ['USD', 'UAH', 'EUR'].forEach(k => {
-            document.getElementById('curr' + k).className = k === c ? 'setting-card active' : 'setting-card';
+            const el = document.getElementById('curr' + k);
+            if(el) el.className = k === c ? 'setting-card active' : 'setting-card';
         });
         if (window.app) {
             window.app.renderGrid();
@@ -106,7 +145,7 @@ class ShopCore {
             }
             this.products.reverse();
             this.renderGrid();
-            loader.innerText = this.products.length;
+            if(loader) loader.innerText = this.products.length;
         });
     }
     renderGrid() {
@@ -121,20 +160,15 @@ class ShopCore {
             const el = document.createElement('div');
             el.className = 'card';
             const imgUrl = p.img ? `url(${p.img})` : 'none';
-            
-            // Extracting logic: if your DB doesn't have size/cond, we hardcode fallback matching your requested style
-            const size = p.size || 'M'; 
-            const cond = p.condition || '8.5';
 
             el.innerHTML = `
                 <div class="card-img-box" onclick="window.app.open('${p.dbKey}')">
-                    <div class="card-img" style="background-image:${imgUrl}; background-size:cover; background-position:center;"></div>
+                    <div class="card-img" style="background-image:${imgUrl};"></div>
                     <div class="card-overlay">ARCHIVE ITEM &rarr;</div>
                 </div>
+                <div class="card-divider"></div>
                 <div class="card-info">
                     <div class="card-title">${p.name}</div>
-                    <div class="card-meta">Size ${size}</div>
-                    <div class="card-meta">Condition ${cond}</div>
                     <div class="card-price">${window.settings.formatPrice(p.price)}</div>
                 </div>
             `;
@@ -148,9 +182,6 @@ class ShopCore {
         document.getElementById('mTitle').innerText = p.name;
         document.getElementById('mPrice').innerText = window.settings.formatPrice(p.price);
         document.getElementById('mId').innerText = p.dbKey.substring(1, 5).toUpperCase();
-        
-        const d = new Date(p.createdAt || Date.now());
-        document.getElementById('mDate').innerText = `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
 
         const imgEl = document.getElementById('mImg');
         imgEl.src = p.img || '';
@@ -164,16 +195,18 @@ class ShopCore {
         if (p) {
             this.cart.push(p);
             this.updateCartUI();
+            window.notify.show('ADDED TO CART');
             window.ui.closeModal();
         }
     }
     removeFromCart(idx) {
         this.cart.splice(idx, 1);
         this.updateCartUI();
+        window.notify.show('ITEM REMOVED');
     }
     checkout() {
         if (this.cart.length === 0) return;
-        alert("ARCHIVE ORDER INITIATED");
+        window.notify.show('ORDER INITIATED');
         this.cart = [];
         this.updateCartUI();
         window.ui.closeDrawers();
@@ -186,19 +219,19 @@ class ShopCore {
         let sum = 0;
         
         if (this.cart.length === 0) {
-            list.innerHTML = `<div style="padding-top:40px; color:var(--text-sec); font-family:var(--font-mono); font-size:11px;">${DICTIONARY[this.lang].empty_bag}</div>`;
+            list.innerHTML = `<div class="empty-cart-msg">${DICTIONARY[this.lang].empty_bag}</div>`;
         } else {
             this.cart.forEach((item, idx) => {
                 sum += parseInt(item.price);
                 const div = document.createElement('div');
                 div.className = 'cart-item';
                 div.innerHTML = `
-                    <div class="cart-thumb" style="background-image:url(${item.img || ''}); background-size:cover; background-position:center;"></div>
-                    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-                        <div style="font-weight:500; font-size:13px; margin-bottom:8px; text-transform:uppercase;">${item.name}</div>
-                        <div style="color:var(--accent); font-family:var(--font-mono); font-size:12px;">${window.settings.formatPrice(item.price)}</div>
+                    <div class="cart-thumb" style="background-image:url(${item.img || ''});"></div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">${window.settings.formatPrice(item.price)}</div>
                     </div>
-                    <div class="link-hover" style="color:var(--text-sec); font-size:20px; display:flex; align-items:center;" onclick="window.app.removeFromCart(${idx})">&times;</div>
+                    <div class="cart-item-remove" onclick="window.app.removeFromCart(${idx})">[X]</div>
                 `;
                 list.appendChild(div);
             });
@@ -259,6 +292,9 @@ class AdminSystem {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
             document.getElementById('adminPassInput').value = '';
+            window.notify.show('SYSTEM UNLOCKED');
+        } else {
+            window.notify.show('ACCESS DENIED');
         }
     }
     logout() {
@@ -266,6 +302,7 @@ class AdminSystem {
         document.getElementById('loginForm').style.display = 'block';
         document.getElementById('adminPanel').style.display = 'none';
         document.getElementById('adminDeleteBtn').style.display = 'none';
+        window.notify.show('SYSTEM LOCKED');
     }
     createItem() {
         const name = document.getElementById('newItemName').value.trim();
@@ -292,9 +329,7 @@ class AdminSystem {
             price: Number(price),
             desc: desc || "",
             img: imgBase64 || "",
-            createdAt: Date.now(),
-            size: "M", // Mocked for design
-            condition: "8.5" // Mocked for design
+            createdAt: Date.now()
         }).then(() => {
             document.getElementById('newItemName').value = '';
             document.getElementById('newItemPrice').value = '';
@@ -302,20 +337,20 @@ class AdminSystem {
             document.getElementById('newItemImg').value = '';
             btn.innerText = "PUBLISH TO ARCHIVE";
             window.ui.closeDrawers();
+            window.notify.show('PUBLISHED TO ARCHIVE');
         });
     }
     deleteCurrentItem() {
-        if (confirm('DELETE FROM ARCHIVE?')) {
-            remove(ref(db, 'products/' + window.app.currId)).then(() => {
-                window.ui.closeModal();
-            });
-        }
+        remove(ref(db, 'products/' + window.app.currId)).then(() => {
+            window.ui.closeModal();
+            window.notify.show('ITEM DELETED');
+        });
     }
 }
 
-// INIT
 window.onload = () => {
     animateHeroText();
+    window.notify = new Notificator();
     window.settings = new SettingsManager();
     window.app = new ShopCore();
     window.ui = new UIManager();

@@ -41,6 +41,7 @@ body {
     letter-spacing: 0.05em;
     font-size: 12px;
     transition: background-color 0.5s, color 0.5s;
+    overflow-x: hidden;
 }
 
 /* Noise Texture */
@@ -100,7 +101,7 @@ header {
 .nav-link { cursor: pointer; color: var(--text-sec); font-size: 11px; transition: 0.3s; font-weight: 600; }
 .nav-link:hover { color: var(--accent); }
 
-.container { padding: 140px 40px 40px; max-width: 1800px; margin: 0 auto; }
+.container { padding: 140px 40px 40px; max-width: 1800px; margin: 0 auto; min-height: 100vh; }
 
 .hero-text {
     font-size: clamp(3rem, 12vw, 10rem);
@@ -120,8 +121,10 @@ header {
     gap: 20px;
 }
 
-.card { cursor: pointer; background: var(--surface); padding: 10px; transition: 0.3s; border: 1px solid transparent; }
+.card { cursor: pointer; background: var(--surface); padding: 10px; transition: 0.3s; border: 1px solid transparent; animation: fadeIn 0.5s ease; }
 .card:hover { background: var(--surface-hover); border-color: var(--border); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 .card-img-box {
     width: 100%; aspect-ratio: 0.85; background: #000;

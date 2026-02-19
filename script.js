@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+// Ваші ключі (в реальному проекті правила мають бути налаштовані в консолі Firebase)
 const firebaseConfig = {
     apiKey: "AIzaSyATJJPdiTWusShpRRZl2_KGLE4gIodM5SA",
     authDomain: "rewear-shop.firebaseapp.com",
@@ -15,6 +16,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const productsRef = ref(db, 'products');
 
+// Словник перекладів
 const DICTIONARY = {
     en: {
         hero: "MATTE<br>OBJECTS", nav_sys: "SYSTEM", nav_bag: "BAG", bag_title: "YOUR BAG", sys_title: "SYSTEM", close: "CLOSE",
@@ -22,7 +24,7 @@ const DICTIONARY = {
         s_lang: "LOCALIZATION", s_curr: "CURRENCY", s_admin: "ADMIN ACCESS", t_matte: "MATTE BLACK", t_modern: "MODERN GREY",
         btn_login: "UNLOCK", empty_bag: "YOUR BAG IS EMPTY", item_added: "ITEM ADDED TO BAG", item_removed: "ITEM REMOVED",
         access_denied: "ACCESS DENIED", access_granted: "ADMIN ACCESS GRANTED", saved: "CHANGES SAVED TO CLOUD",
-        deleted: "ITEM DELETED PERMANENTLY", fill_data: "PLEASE FILL ALL FIELDS"
+        deleted: "ITEM DELETED PERMANENTLY", fill_data: "PLEASE FILL ALL FIELDS", order_success: "ORDER RECEIVED (DEMO)"
     },
     ua: {
         hero: "МАТОВИЙ<br>АРХІВ", nav_sys: "СИСТЕМА", nav_bag: "КОШИК", bag_title: "ВАШ КОШИК", sys_title: "НАЛАШТУВАННЯ", close: "ЗАКРИТИ",
@@ -30,7 +32,7 @@ const DICTIONARY = {
         s_lang: "МОВА", s_curr: "ВАЛЮТА", s_admin: "ВХІД ПРОДАВЦЯ", t_matte: "ГЛИБОКИЙ ЧОРНИЙ", t_modern: "ТЕХНО СІРИЙ",
         btn_login: "УВІЙТИ", empty_bag: "КОШИК ПОРОЖНІЙ", item_added: "ТОВАР ДОДАНО", item_removed: "ТОВАР ВИДАЛЕНО",
         access_denied: "ДОСТУП ЗАБОРОНЕНО", access_granted: "РЕЖИМ ПРОДАВЦЯ АКТИВНИЙ", saved: "ЗБЕРЕЖЕНО В ХМАРУ",
-        deleted: "ТОВАР ВИДАЛЕНО НАЗАВЖДИ", fill_data: "ЗАПОВНІТЬ ВСІ ПОЛЯ"
+        deleted: "ТОВАР ВИДАЛЕНО НАЗАВЖДИ", fill_data: "ЗАПОВНІТЬ ВСІ ПОЛЯ", order_success: "ЗАМОВЛЕННЯ ПРИЙНЯТО (ДЕМО)"
     },
     de: {
         hero: "MATTE<br>OBJEKTE", nav_sys: "SYSTEM", nav_bag: "TASCHE", bag_title: "IHRE TASCHE", sys_title: "EINSTELLUNGEN", close: "SCHLIEßEN",
@@ -38,7 +40,7 @@ const DICTIONARY = {
         s_lang: "SPRACHE", s_curr: "WÄHRUNG", s_admin: "VERKÄUFERZUGANG", t_matte: "MATTSCHWARZ", t_modern: "MODERN GRAU",
         btn_login: "ENTSPERREN", empty_bag: "TASCHE IST LEER", item_added: "ZUM WARENKORB HINZUGEFÜGT", item_removed: "ARTIKEL ENTFERNT",
         access_denied: "ZUGRIFF VERWEIGERT", access_granted: "ADMINISTRATOR ZUGRIFF", saved: "IN DER CLOUD GESPEICHERT",
-        deleted: "DAUERHAFT GELÖSCHT", fill_data: "BITTE ALLE FELDER AUSFÜLLEN"
+        deleted: "DAUERHAFT GELÖSCHT", fill_data: "BITTE ALLE FELDER AUSFÜLLEN", order_success: "BESTELLUNG AUFGENOMMEN"
     }
 };
 
@@ -89,17 +91,6 @@ class AudioController {
         gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
         osc.start();
         osc.stop(this.ctx.currentTime + 0.1);
-        setTimeout(() => {
-            const osc2 = this.ctx.createOscillator();
-            const gain2 = this.ctx.createGain();
-            osc2.connect(gain2);
-            gain2.connect(this.ctx.destination);
-            osc2.frequency.value = 1200;
-            gain2.gain.setValueAtTime(0.02, this.ctx.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
-            osc2.start();
-            osc2.stop(this.ctx.currentTime + 0.1);
-        }, 50);
     }
     toggle(bool) {
         this.enabled = bool;
@@ -210,6 +201,13 @@ class ShopCore {
         this.lang = localStorage.getItem('rewear_lang') || 'en';
         this.listenToCloud();
         this.setLang(this.lang, false);
+        this.initSearch();
+    }
+    initSearch() {
+        const searchInput = document.getElementById('search');
+        if(searchInput) {
+            searchInput.addEventListener('input', () => this.renderGrid());
+        }
     }
     listenToCloud() {
         const loader = document.getElementById('itemCounter');
@@ -221,16 +219,22 @@ class ShopCore {
                     this.products.push({ dbKey: key, ...data[key] });
                 });
             }
-            this.products.reverse();
+            this.products.reverse(); // Newest first
             this.renderGrid();
             loader.innerText = `${this.products.length} ARCHIVE UNITS`;
+        }, (error) => {
+            console.error(error);
+            loader.innerText = "OFFLINE MODE";
         });
     }
     renderGrid() {
         const grid = document.getElementById('grid');
-        const term = document.getElementById('search').value.toLowerCase();
+        const searchInput = document.getElementById('search');
+        const term = searchInput ? searchInput.value.toLowerCase() : '';
+        
         grid.innerHTML = '';
         const filtered = this.products.filter(p => p.name.toLowerCase().includes(term));
+        
         filtered.forEach(p => {
             const el = document.createElement('div');
             el.className = 'card fade-in';
@@ -239,7 +243,7 @@ class ShopCore {
             el.innerHTML = `
                 <div class="card-img-box">
                     <div class="card-img" style="background-image:${imgUrl}; background-size:cover; background-position:center;"></div>
-                    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">${noImg}</div>
+                    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none;">${noImg}</div>
                 </div>
                 <div class="card-info">
                     <span class="card-title">${p.name}</span>
@@ -264,7 +268,8 @@ class ShopCore {
         const imgEl = document.getElementById('mImg');
         imgEl.src = p.img || '';
         imgEl.style.display = p.img ? 'block' : 'none';
-        if (window.sysAdmin.active) {
+        
+        if (window.sysAdmin && window.sysAdmin.active) {
             document.getElementById('mViewMode').style.display = 'none';
             document.getElementById('mEditMode').style.display = 'block';
             document.getElementById('mImgEditBtn').style.display = 'block';
@@ -293,6 +298,14 @@ class ShopCore {
         this.updateCartUI();
         window.audio.click();
         window.notify.show('item_removed');
+    }
+    checkout() {
+        if (this.cart.length === 0) return;
+        window.audio.success();
+        window.notify.show('order_success');
+        this.cart = [];
+        this.updateCartUI();
+        window.ui.closeDrawers();
     }
     updateCartUI() {
         const list = document.getElementById('cartList');
@@ -346,7 +359,6 @@ class UIManager {
     constructor() {
         this.backdrop = document.getElementById('backdrop');
         this.backdrop.onclick = () => this.closeAll();
-        document.getElementById('search').oninput = () => window.app.renderGrid();
     }
     openDrawer(id) {
         window.audio.click();
@@ -400,16 +412,25 @@ class AdminSystem {
         window.app.renderGrid();
     }
     create() {
-        push(productsRef, {
+        console.log("Attempting to create item...");
+        
+        const newItem = {
             name: "NEW ITEM",
             price: 0,
-            desc: "Description...",
-            img: null,
+            desc: "Description placeholder...",
+            img: "",
             createdAt: Date.now()
-        }).then(() => {
+        };
+
+        push(productsRef, newItem).then(() => {
+            console.log("Item created successfully");
             window.audio.success();
             window.notify.show('saved');
             window.ui.closeDrawers();
+        }).catch((error) => {
+            console.error("Firebase Create Error:", error);
+            window.audio.error();
+            alert("Error: Database permission denied or invalid config.\nCheck console (F12) for details.");
         });
     }
     updateImgPreview(input) {
@@ -435,7 +456,7 @@ class AdminSystem {
         const dbKey = window.app.currId;
         const updates = {
             name: name.toUpperCase(),
-            price: price,
+            price: Number(price),
             desc: document.getElementById('eDesc').value
         };
         if (this.tempImg) {
@@ -446,6 +467,9 @@ class AdminSystem {
             window.audio.success();
             window.notify.show('saved');
             window.ui.closeModal();
+        }).catch(err => {
+            console.error(err);
+            alert("Error saving: " + err.message);
         });
     }
     deleteCurrent() {
@@ -454,11 +478,12 @@ class AdminSystem {
                 window.audio.click();
                 window.notify.show('deleted');
                 window.ui.closeModal();
-            });
+            }).catch(err => alert("Error deleting: " + err.message));
         }
     }
 }
 
+// GLOBAL INIT
 window.onload = () => {
     window.audio = new AudioController();
     window.notify = new Notificator();

@@ -17,25 +17,25 @@ const productsRef = ref(db, 'products');
 
 const DICTIONARY = {
     en: {
-        hero: "MATTE<br>OBJECTS", nav_sys: "SYSTEM", nav_bag: "BAG", bag_title: "YOUR BAG", sys_title: "SYSTEM", close: "CLOSE",
-        subtotal: "SUBTOTAL", checkout: "PROCEED", add_cart: "ADD TO CART", s_visual: "VISUAL MODE", s_audio: "AUDIO UI",
-        s_lang: "LOCALIZATION", s_curr: "CURRENCY", t_matte: "MATTE BLACK", t_modern: "MODERN GREY", s_admin: "ADMIN ACCESS", btn_login: "UNLOCK",
-        empty_bag: "YOUR BAG IS EMPTY", item_added: "ITEM ADDED TO BAG", item_removed: "ITEM REMOVED",
-        order_success: "ORDER RECEIVED (DEMO)", access_granted: "ADMIN ACCESS GRANTED", access_denied: "ACCESS DENIED", saved: "PUBLISHED TO CLOUD", deleted: "ITEM DELETED"
+        hero: "UNDERGROUND<br>ARCHIVE", nav_sys: "SYSTEM", nav_bag: "CART", bag_title: "CART", sys_title: "SYSTEM", close: "CLOSE",
+        subtotal: "SUBTOTAL", checkout: "PROCEED", add_cart: "ADD TO CART", s_visual: "THEME", s_audio: "AUDIO UI",
+        s_lang: "LANGUAGE", s_curr: "CURRENCY", t_matte: "BLACK VOID", t_modern: "CONCRETE", s_admin: "ADMIN ACCESS", btn_login: "UNLOCK",
+        empty_bag: "CART IS EMPTY", item_added: "ADDED TO CART", item_removed: "ITEM REMOVED",
+        order_success: "ORDER RECEIVED (DEMO)", access_granted: "SYSTEM UNLOCKED", access_denied: "ACCESS DENIED", saved: "PUBLISHED TO ARCHIVE", deleted: "ITEM DELETED"
     },
     ua: {
-        hero: "МАТОВИЙ<br>АРХІВ", nav_sys: "СИСТЕМА", nav_bag: "КОШИК", bag_title: "ВАШ КОШИК", sys_title: "НАЛАШТУВАННЯ", close: "ЗАКРИТИ",
-        subtotal: "СУМА", checkout: "ОФОРМИТИ", add_cart: "У КОШИК", s_visual: "ТЕМА ДИЗАЙНУ", s_audio: "ЗВУКИ",
-        s_lang: "МОВА", s_curr: "ВАЛЮТА", t_matte: "ГЛИБОКИЙ ЧОРНИЙ", t_modern: "ТЕХНО СІРИЙ", s_admin: "ВХІД ПРОДАВЦЯ", btn_login: "УВІЙТИ",
+        hero: "UNDERGROUND<br>ARCHIVE", nav_sys: "СИСТЕМА", nav_bag: "КОШИК", bag_title: "КОШИК", sys_title: "СИСТЕМА", close: "ЗАКРИТИ",
+        subtotal: "СУМА", checkout: "ОФОРМИТИ", add_cart: "У КОШИК", s_visual: "ТЕМА", s_audio: "ЗВУКИ",
+        s_lang: "МОВА", s_curr: "ВАЛЮТА", t_matte: "BLACK VOID", t_modern: "CONCRETE", s_admin: "ВХІД АДМІНА", btn_login: "УВІЙТИ",
         empty_bag: "КОШИК ПОРОЖНІЙ", item_added: "ТОВАР ДОДАНО", item_removed: "ТОВАР ВИДАЛЕНО",
-        order_success: "ЗАМОВЛЕННЯ ПРИЙНЯТО (ДЕМО)", access_granted: "РЕЖИМ ПРОДАВЦЯ АКТИВНИЙ", access_denied: "ДОСТУП ЗАБОРОНЕНО", saved: "ТОВАР ОПУБЛІКОВАНО", deleted: "ТОВАР ВИДАЛЕНО"
+        order_success: "ЗАМОВЛЕННЯ ПРИЙНЯТО (ДЕМО)", access_granted: "СИСТЕМУ РОЗБЛОКОВАНО", access_denied: "ДОСТУП ЗАБОРОНЕНО", saved: "ОПУБЛІКОВАНО В АРХІВІ", deleted: "ТОВАР ВИДАЛЕНО"
     },
     de: {
-        hero: "MATTE<br>OBJEKTE", nav_sys: "SYSTEM", nav_bag: "TASCHE", bag_title: "IHRE TASCHE", sys_title: "EINSTELLUNGEN", close: "SCHLIEßEN",
-        subtotal: "ZWISCHENSUMME", checkout: "WEITER", add_cart: "IN DEN WARENKORB", s_visual: "VISUELLER MODUS", s_audio: "AUDIO",
-        s_lang: "SPRACHE", s_curr: "WÄHRUNG", t_matte: "MATTSCHWARZ", t_modern: "MODERN GRAU", s_admin: "VERKÄUFERZUGANG", btn_login: "ENTSPERREN",
-        empty_bag: "TASCHE IST LEER", item_added: "ZUM WARENKORB HINZUGEFÜGT", item_removed: "ARTIKEL ENTFERNT",
-        order_success: "BESTELLUNG AUFGENOMMEN", access_granted: "ADMINISTRATOR ZUGRIFF", access_denied: "ZUGRIFF VERWEIGERT", saved: "VERÖFFENTLICHT", deleted: "GELÖSCHT"
+        hero: "UNDERGROUND<br>ARCHIVE", nav_sys: "SYSTEM", nav_bag: "WAGEN", bag_title: "WARENKORB", sys_title: "SYSTEM", close: "SCHLIEßEN",
+        subtotal: "ZWISCHENSUMME", checkout: "WEITER", add_cart: "ZUM WARENKORB", s_visual: "THEMA", s_audio: "AUDIO UI",
+        s_lang: "SPRACHE", s_curr: "WÄHRUNG", t_matte: "BLACK VOID", t_modern: "CONCRETE", s_admin: "ADMIN ZUGANG", btn_login: "ENTSPERREN",
+        empty_bag: "LEER", item_added: "HINZUGEFÜGT", item_removed: "ENTFERNT",
+        order_success: "BESTELLUNG AUFGENOMMEN", access_granted: "ENTSPERRT", access_denied: "ZUGRIFF VERWEIGERT", saved: "VERÖFFENTLICHT", deleted: "GELÖSCHT"
     }
 };
 
@@ -119,6 +119,7 @@ class Notificator {
         toast.style.background = '#fff';
         toast.style.color = '#000';
         toast.style.padding = '12px 24px';
+        toast.style.fontFamily = "'JetBrains Mono', monospace";
         toast.style.fontSize = '10px';
         toast.style.fontWeight = '700';
         toast.style.letterSpacing = '1px';
@@ -141,7 +142,7 @@ class Notificator {
 class SettingsManager {
     constructor() {
         this.currency = localStorage.getItem('rewear_currency') || 'USD';
-        this.theme = localStorage.getItem('rewear_theme') || 'matte';
+        this.theme = localStorage.getItem('rewear_theme') || 'void';
         this.init();
     }
     init() {
@@ -156,8 +157,8 @@ class SettingsManager {
         localStorage.setItem('rewear_theme', mode);
         document.body.className = '';
         document.body.classList.add('theme-' + mode);
-        document.getElementById('themeMatte').className = mode === 'matte' ? 'setting-card active' : 'setting-card';
-        document.getElementById('themeModern').className = mode === 'modern' ? 'setting-card active' : 'setting-card';
+        document.getElementById('themeVoid').className = mode === 'void' ? 'setting-card active' : 'setting-card';
+        document.getElementById('themeConcrete').className = mode === 'concrete' ? 'setting-card active' : 'setting-card';
     }
     setCurrency(c, notify = true) {
         if (notify) window.audio.click();
@@ -220,7 +221,7 @@ class ShopCore {
             }
             this.products.reverse();
             this.renderGrid();
-            loader.innerText = `${this.products.length} ARCHIVE UNITS`;
+            loader.innerText = `${this.products.length} ITEMS`;
         }, (error) => {
             console.error(error);
             loader.innerText = "OFFLINE MODE";
@@ -236,16 +237,21 @@ class ShopCore {
         
         filtered.forEach(p => {
             const el = document.createElement('div');
-            el.className = 'card fade-in';
+            el.className = 'card';
             const imgUrl = p.img ? `url(${p.img})` : 'none';
-            const noImg = p.img ? '' : '<span style="color:var(--text-sec); font-size:10px;">NO IMG</span>';
+            const noImg = p.img ? '' : '<span style="color:var(--text-sec); font-family:var(--font-mono); font-size:10px;">NO IMG</span>';
             el.innerHTML = `
                 <div class="card-img-box">
                     <div class="card-img" style="background-image:${imgUrl}; background-size:cover; background-position:center;"></div>
+                    <div class="card-overlay">ARCHIVE ITEM &rarr;</div>
                     <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none;">${noImg}</div>
                 </div>
                 <div class="card-info">
                     <span class="card-title">${p.name}</span>
+                    <div class="card-meta">
+                        <span>SIZE: OS</span>
+                        <span>COND: 8.5/10</span>
+                    </div>
                     <span class="card-price">${window.settings.formatPrice(p.price)}</span>
                 </div>
             `;
@@ -262,13 +268,18 @@ class ShopCore {
         if (!p) return;
         document.getElementById('mTitle').innerText = p.name;
         document.getElementById('mPrice').innerText = window.settings.formatPrice(p.price);
-        document.getElementById('mDesc').innerText = p.desc || "No description available.";
+        document.getElementById('mDesc').innerText = p.desc || "No technical description available.";
         document.getElementById('mId').innerText = p.dbKey.substring(1, 8).toUpperCase();
+        
+        // Форматуємо дату з Firebase
+        const d = new Date(p.createdAt || Date.now());
+        const dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+        document.getElementById('mDate').innerText = dateStr;
+
         const imgEl = document.getElementById('mImg');
         imgEl.src = p.img || '';
         imgEl.style.display = p.img ? 'block' : 'none';
         
-        // Показувати кнопку видалення тільки якщо адмін онлайн
         document.getElementById('adminDeleteBtn').style.display = (window.sysAdmin && window.sysAdmin.active) ? 'block' : 'none';
         
         window.ui.openModal();
@@ -305,7 +316,7 @@ class ShopCore {
         list.innerHTML = '';
         let sum = 0;
         if (this.cart.length === 0) {
-            list.innerHTML = `<div style="text-align:center; padding-top:50px; color:var(--text-sec); font-size:10px;">${DICTIONARY[this.lang].empty_bag}</div>`;
+            list.innerHTML = `<div style="text-align:center; padding-top:50px; color:var(--text-sec); font-family:var(--font-mono); font-size:10px;">${DICTIONARY[this.lang].empty_bag}</div>`;
             checkoutBtn.style.opacity = '0.5';
             checkoutBtn.style.pointerEvents = 'none';
         } else {
@@ -316,18 +327,18 @@ class ShopCore {
                 const div = document.createElement('div');
                 div.className = 'cart-item';
                 div.innerHTML = `
-                    <div class="cart-thumb" style="background-image:url(${item.img || ''}); background-size:cover; background-position:center; background-color:#111;"></div>
+                    <div class="cart-thumb" style="background-image:url(${item.img || ''}); background-size:cover; background-position:center;"></div>
                     <div style="flex:1;">
-                        <div style="font-weight:700; font-size:11px; margin-bottom:5px;">${item.name}</div>
-                        <div style="color:var(--text-sec); font-size:10px;">${window.settings.formatPrice(item.price)}</div>
+                        <div style="font-weight:600; font-size:12px; margin-bottom:5px;">${item.name}</div>
+                        <div style="color:var(--text-sec); font-family:var(--font-mono); font-size:11px;">${window.settings.formatPrice(item.price)}</div>
                     </div>
-                    <div style="color:var(--text-sec); font-size:9px; cursor:pointer;" onclick="window.app.removeFromCart(${idx})">×</div>
+                    <div style="color:var(--text-sec); font-size:16px; cursor:pointer;" onclick="window.app.removeFromCart(${idx})">×</div>
                 `;
                 list.appendChild(div);
             });
         }
         total.innerText = window.settings.formatPrice(sum);
-        count.innerText = `(${this.cart.length})`;
+        count.innerText = this.cart.length;
     }
     setLang(l, notify = true) {
         if (notify) window.audio.click();
@@ -376,7 +387,7 @@ class UIManager {
 class AdminSystem {
     constructor() {
         this.active = false;
-        this.passcode = "admin2026"; // Ваш пароль
+        this.passcode = "admin2026";
     }
     
     login() {
@@ -443,16 +454,15 @@ class AdminSystem {
             document.getElementById('newItemPrice').value = '';
             document.getElementById('newItemDesc').value = '';
             document.getElementById('newItemImg').value = '';
-            btn.innerText = "PUBLISH ITEM";
+            btn.innerText = "PUBLISH";
             btn.style.pointerEvents = "auto";
             window.ui.closeDrawers();
             window.notify.show('saved');
         }).catch((error) => {
             console.error(error);
             window.audio.error();
-            btn.innerText = "ERROR! CHECK RULES";
+            btn.innerText = "ERROR!";
             btn.style.pointerEvents = "auto";
-            alert("Помилка запису. Перевірте Firebase Rules (дозволи).");
         });
     }
 

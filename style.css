@@ -1,249 +1,145 @@
-/* =========================================
-   1. CORE VARIABLES (THEMES)
-   ========================================= */
-   :root {
-    --font-main: 'Inter', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-    --ease: cubic-bezier(0.19, 1, 0.22, 1);
-}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RE—WAKE | Archived Garments</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-void">
 
-/* THEME 1: BLACK VOID (Default) */
-body.theme-void {
-    --bg: #050505;
-    --surface: #0a0a0a;
-    --surface-hover: #111111;
-    --accent: #ffffff;
-    --text-sec: #666666;
-    --border: #1a1a1a;
-    --glass: rgba(5, 5, 5, 0.85);
-}
+    <div class="grain-overlay"></div>
+    <div class="backdrop" id="backdrop"></div>
+    
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="ui.closeModal()">&times;</div>
+            <div class="modal-img-col">
+                <img id="mImg" src="" alt="Archive Item">
+            </div>
+            <div class="modal-info-col">
+                <div class="tech-label" style="margin-bottom: 30px;">ITEM_<span id="mId">00</span></div>
+                
+                <div id="mViewMode" class="modal-scroll-area">
+                    <div class="modal-title" id="mTitle">PRODUCT</div>
+                    
+                    <div class="tech-specs">
+                        <div class="spec-row"><span>Year:</span> <span>2019</span></div>
+                        <div class="spec-row"><span>Origin:</span> <span>EU</span></div>
+                        <div class="spec-row"><span>Condition:</span> <span>8.5/10</span></div>
+                        <div class="spec-row"><span>Fabric:</span> <span>Cotton Blend</span></div>
+                        <div class="spec-row"><span>Previous Owners:</span> <span>1</span></div>
+                        <div class="spec-row"><span>Archive Added:</span> <span id="mDate">02.2026</span></div>
+                    </div>
 
-/* THEME 2: CONCRETE */
-body.theme-concrete {
-    --bg: #111111;
-    --surface: #1a1a1a;
-    --surface-hover: #222222;
-    --accent: #e0e0e0;
-    --text-sec: #888888;
-    --border: #333333;
-    --glass: rgba(17, 17, 17, 0.85);
-}
+                    <div class="modal-price" id="mPrice">$000</div>
+                    
+                    <div style="margin-top: auto;">
+                        <button class="btn" style="width:100%; margin-bottom: 15px;" onclick="app.addToCartFromModal()" data-t="add_cart">ADD TO CART</button>
+                        <button id="adminDeleteBtn" class="btn-outline" style="width:100%; border-color:#555; color:#555; display:none; margin-bottom: 15px;" onclick="sysAdmin.deleteCurrentItem()">DELETE ITEM</button>
+                        <div class="disclaimer">This piece is pre-owned. Signs of wear may be visible.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-/* =========================================
-   2. GLOBAL STYLES
-   ========================================= */
-* { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; border-radius: 0 !important; }
+    <header>
+        <div class="logo" onclick="location.reload()">RE—WAKE</div>
+        <div class="header-nav">
+            <div class="nav-link" id="btnSettings" onclick="ui.openDrawer('settingsDrawer')">SYSTEM</div>
+            <div class="nav-link" id="btnCart" onclick="ui.openDrawer('cartDrawer')">
+                CART (<span id="cartCount">0</span>)
+            </div>
+        </div>
+    </header>
 
-body {
-    background-color: var(--bg);
-    color: var(--accent);
-    font-family: var(--font-main);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 12px;
-    transition: background-color 0.5s, color 0.5s;
-    overflow-x: hidden;
-}
+    <div class="hero-section">
+        <div class="hero-center">
+            <h1 class="hero-text" id="heroText">UNDERGROUND<br>ARCHIVE</h1>
+            <div class="hero-subtext" style="margin-top: 20px;">Curated second-hand pieces. Selected, not mass.</div>
+        </div>
+        <div class="divider hero-line"></div>
+        <div class="hero-footer">
+            <div class="tech-label">DROP_01 — <span id="itemCounter">...</span> ITEMS</div>
+            <div class="tech-label link-hover" onclick="document.getElementById('archive-grid').scrollIntoView({behavior: 'smooth'})">ENTER &rarr;</div>
+        </div>
+    </div>
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); }
+    <div class="container" id="archive-grid">
+        <div class="controls-bar">
+            <input type="text" class="input-std" id="search" placeholder="SEARCH ARCHIVE...">
+        </div>
+        <div class="grid" id="grid"></div>
+    </div>
 
-/* =========================================
-   3. COMPONENTS
-   ========================================= */
-.btn {
-    background: var(--accent); color: var(--bg);
-    border: 1px solid var(--accent);
-    padding: 16px 24px; font-weight: 700; cursor: pointer;
-    transition: 0.2s; font-size: 12px; letter-spacing: 1px;
-}
-.btn:hover { background: transparent; color: var(--accent); }
-.btn:active { transform: scale(0.98); }
+    <div class="drawer" id="cartDrawer">
+        <div class="drawer-header">
+            <div class="drawer-title" data-t="bag_title">CART</div>
+            <div class="nav-link link-hover" onclick="ui.closeDrawers()" data-t="close">CLOSE</div>
+        </div>
+        <div id="cartList" style="flex:1; overflow-y: auto;"></div>
+        <div class="drawer-footer">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-family: var(--font-mono); font-size: 11px;">
+                <span data-t="subtotal">SUBTOTAL</span>
+                <span id="cartTotal">0</span>
+            </div>
+            <button class="btn" style="width:100%;" onclick="app.checkout()" data-t="checkout">PROCEED</button>
+        </div>
+    </div>
 
-.btn-outline {
-    background: transparent; color: var(--text-sec);
-    border: 1px solid var(--border); padding: 14px;
-    cursor: pointer; transition: 0.2s; font-weight: 600;
-}
-.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    <div class="drawer" id="settingsDrawer">
+        <div class="drawer-header">
+            <div class="drawer-title">SYSTEM / RE-WAKE</div>
+            <div class="nav-link link-hover" onclick="ui.closeDrawers()" data-t="close">CLOSE</div>
+        </div>
 
-.input-std {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--accent); padding: 15px; width: 100%;
-    font-family: var(--font-mono); font-size: 12px;
-    transition: 0.3s; margin-bottom: 10px;
-}
-.input-std:focus { border-color: var(--accent); background: var(--surface); }
+        <div class="section-title">THEME</div>
+        <div class="settings-grid">
+            <div class="setting-card active" id="themeVoid" onclick="settings.setTheme('void')">BLACK VOID</div>
+            <div class="setting-card" id="themeConcrete" onclick="settings.setTheme('concrete')">CONCRETE</div>
+        </div>
 
-.divider { height: 1px; background: var(--border); margin: 20px 0; width: 100%; }
+        <div class="section-title">LANGUAGE</div>
+        <div class="settings-grid">
+            <div class="setting-card active" id="lang-en" onclick="app.setLang('en')">EN</div>
+            <div class="setting-card" id="lang-ua" onclick="app.setLang('ua')">UA</div>
+        </div>
 
-.status-badge { display: inline-block; padding: 5px 10px; border: 1px solid #1a1a1a; color: var(--text-sec); font-family: var(--font-mono); font-size: 10px; margin-bottom: 20px; }
-.tech-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-sec); letter-spacing: 1px; }
+        <div class="section-title">CURRENCY</div>
+        <div class="settings-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="setting-card active" id="currUSD" onclick="settings.setCurrency('USD')">USD</div>
+            <div class="setting-card" id="currUAH" onclick="settings.setCurrency('UAH')">UAH</div>
+            <div class="setting-card" id="currEUR" onclick="settings.setCurrency('EUR')">EUR</div>
+        </div>
 
-/* =========================================
-   4. LAYOUT & HERO
-   ========================================= */
-header {
-    position: fixed; top: 0; left: 0; width: 100%; height: 70px;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 40px; z-index: 100;
-    background: var(--glass); backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
-}
+        <div class="section-title">ADMIN ACCESS</div>
+        <div id="loginForm">
+            <input type="password" id="adminPassInput" class="input-std" placeholder="PASSCODE">
+            <button class="btn-outline" style="width:100%; margin-top: 10px;" onclick="sysAdmin.login()">UNLOCK</button>
+        </div>
+        
+        <div id="adminPanel" style="display:none;">
+            <div class="status-badge" style="color: #EDEDED; border-color: #777;">ADMIN MODE ACTIVE</div>
+            <div style="background: var(--surface); padding: 15px; border: 1px solid var(--border); margin-bottom: 20px;">
+                <input type="text" id="newItemName" class="input-std" placeholder="ITEM NAME">
+                <input type="number" id="newItemPrice" class="input-std" placeholder="PRICE">
+                <textarea id="newItemDesc" class="input-std" placeholder="DESCRIPTION" rows="3"></textarea>
+                <input type="file" id="newItemImg" accept="image/*" class="input-std" style="padding: 10px;">
+                <button id="btnPublish" class="btn" style="width:100%; margin-top:10px;" onclick="sysAdmin.createItem()">PUBLISH TO ARCHIVE</button>
+            </div>
+            <button class="nav-link link-hover" style="color:#777; width:100%; text-align:center;" onclick="sysAdmin.logout()">LOCK SYSTEM</button>
+        </div>
+        
+        <div class="sys-footer">
+            <div style="margin-bottom: 5px;">VERSION 01.ARCHIVE</div>
+            <div>SERVER STATUS: <span style="color: #EDEDED;">STABLE</span></div>
+        </div>
+    </div>
 
-.header-nav { display: flex; gap: 40px; font-family: var(--font-mono); }
-.logo { font-weight: 800; font-size: 20px; letter-spacing: 2px; cursor: pointer; }
-.nav-link { cursor: pointer; color: var(--accent); font-size: 12px; transition: 0.3s; }
-.nav-link:hover { opacity: 0.6; }
-
-.hero-section {
-    min-height: 100vh; display: flex; flex-direction: column;
-    justify-content: center; padding: 0 40px; position: relative;
-}
-.hero-center { animation: fadeIn 1s var(--ease); }
-.hero-text {
-    font-size: clamp(3rem, 10vw, 9rem);
-    font-weight: 800; line-height: 0.85; letter-spacing: -0.04em;
-    margin-bottom: 20px; color: var(--accent);
-}
-.hero-subtext { font-family: var(--font-mono); font-size: 12px; color: var(--text-sec); }
-.hero-footer {
-    position: absolute; bottom: 40px; left: 40px; right: 40px;
-    display: flex; justify-content: space-between;
-}
-
-.container { padding: 80px 40px 100px; max-width: 1800px; margin: 0 auto; }
-
-.controls-bar { margin-bottom: 40px; }
-#search { max-width: 400px; border: none; border-bottom: 1px solid var(--border); padding-left: 0; font-size: 16px; font-family: var(--font-main); }
-#search:focus { border-bottom-color: var(--accent); background: transparent; }
-
-/* GRID */
-.grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 40px 20px;
-}
-
-.card { cursor: pointer; background: transparent; transition: 0.3s; animation: fadeIn 0.8s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.card-img-box {
-    width: 100%; aspect-ratio: 0.75; background: var(--surface);
-    overflow: hidden; position: relative; margin-bottom: 15px;
-    border: 1px solid transparent; transition: 0.3s;
-}
-.card-img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: filter 0.5s var(--ease), transform 0.5s var(--ease);
-}
-.card-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
-    color: #fff; font-family: var(--font-mono); font-size: 11px; opacity: 0; transition: 0.3s;
-}
-.card:hover .card-img-box { border-color: var(--border); }
-.card:hover .card-img { filter: brightness(1.1); transform: scale(1.02); }
-.card:hover .card-overlay { opacity: 1; }
-
-.card-info { display: flex; flex-direction: column; gap: 5px; }
-.card-title { font-weight: 600; font-size: 13px; }
-.card-meta { display: flex; gap: 15px; font-family: var(--font-mono); color: var(--text-sec); font-size: 10px; }
-.card-price { font-family: var(--font-mono); color: var(--accent); margin-top: 5px; font-size: 12px; }
-
-/* =========================================
-   5. DRAWERS & MODALS
-   ========================================= */
-.backdrop {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9); z-index: 2000;
-    opacity: 0; visibility: hidden; transition: 0.4s;
-}
-.backdrop.active { opacity: 1; visibility: visible; }
-
-.drawer {
-    position: fixed; top: 0; right: -100%;
-    width: 450px; height: 100%;
-    background: #0a0a0a; border-left: 1px solid var(--border);
-    z-index: 2500; transition: 0.5s var(--ease); padding: 40px;
-    display: flex; flex-direction: column; overflow-y: auto;
-}
-.drawer.open { right: 0; }
-
-.drawer-header { display: flex; justify-content: space-between; margin-bottom: 40px; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px;}
-.drawer-title { font-size: 18px; font-weight: 600; }
-.drawer-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
-
-/* SETTINGS UI */
-.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 30px; border: 1px solid var(--border); }
-.setting-card {
-    padding: 15px; cursor: pointer; transition: 0.2s; background: transparent;
-    border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    text-align: center;
-}
-.setting-card:last-child { border-right: none; }
-.setting-card.active { background: var(--accent); color: var(--bg); }
-.setting-val { font-family: var(--font-mono); font-size: 11px; }
-
-.section-title { font-family: var(--font-mono); font-size: 10px; color: var(--text-sec); margin: 25px 0 10px; letter-spacing: 1px; }
-.sys-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 10px; color: var(--text-sec); line-height: 1.6; }
-
-/* MODAL */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 2200; display: flex; align-items: center; justify-content: center;
-    opacity: 0; visibility: hidden; transition: 0.4s; pointer-events: none;
-    padding: 40px;
-}
-.modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
-
-.modal-content {
-    width: 100%; height: 100%; max-width: 1600px;
-    background: var(--bg); border: 1px solid var(--border);
-    display: flex; overflow: hidden; position: relative;
-}
-
-.modal-close {
-    position: absolute; top: 20px; left: 20px; width: 40px; height: 40px;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--border); cursor: pointer; z-index: 10;
-    background: var(--glass); color: var(--accent); font-size: 20px;
-}
-.modal-close:hover { background: var(--accent); color: var(--bg); }
-
-.modal-img-col { flex: 0 0 70%; background: var(--surface); position: relative; border-right: 1px solid var(--border); }
-.modal-img-col img { width: 100%; height: 100%; object-fit: cover; }
-
-.modal-info-col { flex: 0 0 30%; padding: 40px; display: flex; flex-direction: column; background: var(--bg); }
-.modal-scroll-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding-top: 40px; }
-.modal-title { font-size: 24px; font-weight: 600; line-height: 1.2; margin-bottom: 15px; }
-.modal-price { font-size: 16px; font-family: var(--font-mono); color: var(--accent); }
-
-.tech-specs { display: flex; flex-direction: column; gap: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--text-sec); }
-.spec-row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
-.spec-row span:last-child { color: var(--accent); }
-
-.modal-desc { font-size: 13px; line-height: 1.6; color: var(--text-sec); margin-bottom: 40px; white-space: pre-wrap; }
-.disclaimer { font-family: var(--font-mono); font-size: 9px; color: var(--text-sec); text-align: center; margin-top: 15px; }
-
-/* CART ITEM */
-.cart-item { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-.cart-thumb { width: 70px; height: 90px; background: var(--surface); object-fit: cover; border: 1px solid var(--border); }
-
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-    .grid { grid-template-columns: repeat(2, 1fr); }
-    .modal-img-col { flex: 0 0 50%; }
-    .modal-info-col { flex: 0 0 50%; }
-}
-@media (max-width: 768px) {
-    .header-nav { gap: 20px; }
-    .hero-text { font-size: 15vw; }
-    .grid { grid-template-columns: 1fr; }
-    .drawer { width: 100%; border-left: none; }
-    .modal-overlay { padding: 0; }
-    .modal-content { flex-direction: column; border: none; }
-    .modal-close { right: 20px; left: auto; }
-    .modal-img-col { flex: none; height: 50vh; border-right: none; border-bottom: 1px solid var(--border); }
-    .modal-info-col { flex: none; height: 50vh; padding: 20px; }
-}
+    <script type="module" src="script.js"></script>
+</body>
+</html>
